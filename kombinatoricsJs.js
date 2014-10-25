@@ -105,6 +105,22 @@
             return f;
         }
 
+
+        var matrixToArray = function(matrix) {
+            var arr = [],
+                c, r, lc = matrix.length,
+                lr, row;
+            for (c = 0; c < lc; ++c) {
+                row = matrix[c];
+                lr = row.length;
+                for (r = 0; r < lr; ++r) {
+                    arr.push(row[r]);
+                }
+            }
+            return arr;
+        }
+
+
         var memoize = function(fnName) {
             var fn = kombinatoricsJs[fnName];
             var cache = {};
@@ -253,7 +269,8 @@
          *@return
          */
         /*iterator for generating combinations call it nextCombination*/
-        kombinatoricsJs.binomIncrement = function(idxVector, maxVal) {
+        var binomIncrement;
+        kombinatoricsJs.binomIncrement = binomIncrement = function(idxVector, maxVal) {
             var l, i, j;
             j = 0;
             l = idxVector.length;
@@ -265,18 +282,79 @@
                     if (idxVector[i] < maxVal - j) break;
                     else j += 1;
                 }
-                if (i < 0) return false;
+                if (i < 0) return 0;
                 //increment
                 idxVector[i] += 1;
                 i += 1;
-                //adjust eventually successive values
+                //adjust successive values
                 for (i; i < l; i += 1) {
                     idxVector[i] = idxVector[i - 1] + 1;
                 }
             }
 
-            return true;
+            return 1;
         }
+
+        var combinationsIterator = function(list, k) {
+
+            var n = list.length;
+
+            var _index = kombinatoricsJs.indexArray(k).getArray();
+            var beginIndex = kombinatoricsJs.indexArray(k).getArray();
+
+            var _collection = list.slice();
+            var combination = new Array(k);
+            var count = 0;
+
+            function setCombination() {
+                for (var i = 0; i < k; ++i) {
+                    combination[i] = _collection[_index[i]];
+                }
+            }
+
+            setCombination();
+
+            var iterator = {
+                next: function() {
+                    if (binomIncrement(_index, n - 1)) {
+                        count++;
+                        setCombination();
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                },
+                getComb: function(cnt) {
+
+                    if (!isNaN(cnt) && cnt > 0) {
+                        var c = cnt - count;
+                        var step;
+                        while (c > 0 && (step = binomIncrement(_index, n - 1))) {
+                            c--;
+                            count++;
+                        }
+
+                        if (!step) return 0;
+                        setCombination();
+                    }
+
+                    return combination.slice();
+
+                },
+                getCount: function() {
+                    return count;
+                },
+                reset: function() {
+                    _index = kombinatoricsJs.indexArray(k).getArray();
+                    setCombination();
+                    count = 0;
+                }
+
+            };
+            return iterator;
+        }
+
+        kombinatoricsJs.combinationsIterator = combinationsIterator;
 
 
         /*not exposed  count can be added separatedly in callback*/
@@ -463,6 +541,20 @@
 
         kombinatoricsJs.permutations = permutations;
 
+
+        var permutationsNK = function(list, k) {
+            var permsNK = [];
+            var _combsNK = combinations(list, k);
+            for (var i = 0; i < _combsNK.length; ++i) {
+                permsNK.push(permutations(_combsNK[i]));
+            }
+            return matrixToArray(permsNK);
+        }
+
+        kombinatoricsJs.permutationsNK = permutationsNK;
+
+
+
         /*not exposed*/
         var nextPermutation = function(list, index, callBack) {
             var n = list.length;
@@ -507,11 +599,7 @@
 
         }
 
-        /*testing
-        var arr = [1, 2, 2, 3, 4, 4],
-            idx = ['a', 'b', 'b', 'c', 'd'],
-            ii = 0;
-        */
+
 
         var makeIndex = function(list) {
             var n = list.length;
@@ -535,7 +623,7 @@
             var n = list.length;
 
             var _index = kombinatoricsJs.indexArray(n).getArray();
-            var beginIndex = _index.subarray(0, n - 1);
+            var beginIndex = kombinatoricsJs.indexArray(n).getArray();
 
             var _collection = list.slice();
             var permutation = list.slice();
@@ -569,8 +657,6 @@
 
                         if (!step) return 0;
                         setPermutation();
-                    } else {
-                        return 0;
                     }
 
                     return permutation.slice();
@@ -580,7 +666,9 @@
                     return count;
                 },
                 reset: function() {
-                    _index = beginIndex.subarray(0, n - 1);
+                    _index = kombinatoricsJs.indexArray(n).getArray();
+                    setPermutation();
+                    count = 0;
                 }
 
             };
@@ -625,27 +713,26 @@
         kombinatoricsJs.permutationsMultiSets = permutationsMultiSets;
 
 
-        /*testing iterator agains same set
-        var iter = permutationsIterator(idx);
-
-        var sets2 = [];
-        ii = 1;
-        var keep = 1;
-        while (keep) {
-            keep = iter.getPerm(ii++);
-            if (!keep) break;
-            sets2.push(keep.toString());
-          
+        var permutationsNKMultiSets = function(list, k) {
+            var permsNK = [];
+            var _combsNK = combinationsMultiSets(list, k);
+            for (var i = 0; i < _combsNK.length; ++i) {
+                permsNK.push(permutationsMultiSets(_combsNK[i]));
+            }
+            return matrixToArray(permsNK);
         }
-        console.log(sets2);
-        console.log(sets2.length);
-        */
+
+        kombinatoricsJs.permutationsNKMultiSets = permutationsNKMultiSets;
+
+
+
 
         var version = 1.0;
 
         kombinatoricsJs.getVersion = function() {
             return version;
         }
+
 
 
         /*freezing*/

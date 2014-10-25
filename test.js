@@ -188,4 +188,85 @@ $(document).ready(function() {
     ["a","c","c","d"],["b","b","c","c"],["b","b","c","d"],["b","c","c","c"],["b","c","c","d"],["c","c","c","d"]] */
 
 
+    var c = 0;
+    /*permutations iterator over 4 elements, for a total of 24 permutations*/
+    var perm = [];
+    var prmIter = kombinatoricsJs.permutationsIterator(['a', 'b', 'c', 'd']);
+
+    perm.push(prmIter.getPerm());
+    while (prmIter.next()) {
+        perm.push(prmIter.getPerm());
+    }
+
+    console.log(JSON.stringify(perm));
+    /*[["a","b","c","d"],["a","b","d","c"],["a","c","b","d"],["a","c","d","b"],["a","d","b","c"],["a","d","c","b"],
+    ["b","a","c","d"],["b","a","d","c"],["b","c","a","d"],["b","c","d","a"],["b","d","a","c"],["b","d","c","a"],
+    ["c","a","b","d"],["c","a","d","b"],["c","b","a","d"],["c","b","d","a"],["c","d","a","b"],["c","d","b","a"],
+    ["d","a","b","c"],["d","a","c","b"],["d","b","a","c"],["d","b","c","a"],["d","c","a","b"],["d","c","b","a"]] */
+
+    prmIter.reset();
+
+
+    console.log('loggin odd permutations');
+    while (perm = prmIter.getPerm(c)) {
+        c += 2;
+        console.log(perm);
+    }
+    /*["a", "b", "c", "d"] 
+    ["a", "c", "b", "d"] 
+    ["a", "d", "b", "c"] 
+    ["b", "a", "c", "d"]
+    ["b", "c", "a", "d"] 
+    ["b", "d", "a", "c"] 
+    ["c", "a", "b", "d"] 
+    ["c", "b", "a", "d"] 
+    ["c", "d", "a", "b"] 
+    ["d", "a", "b", "c"] 
+    ["d", "b", "a", "c"] 
+    ["d", "c", "a", "b"] */
+
+    /*combinationsIterator 5 elements grouped by 3, for a total of 10 combiantions */
+    var cmbIter = kombinatoricsJs.combinationsIterator(['a', 'b', 'c', 'd', 'e'], 3);
+    var comb = [];
+    comb.push(cmbIter.getComb());
+    while (cmbIter.next()) {
+        comb.push(cmbIter.getComb());
+    }
+
+    console.log(JSON.stringify(comb));
+    /*[["a","b","c"],["a","b","d"],["a","b","e"],["a","c","d"],["a","c","e"],
+    ["a","d","e"],["b","c","d"],["b","c","e"],["b","d","e"],["c","d","e"]] */
+
+    cmbIter.reset();
+
+    c = 0;
+
+    console.log('logging odd combinations');
+    while (comb = cmbIter.getComb(c)) {
+        c += 2;
+        console.log(comb);
+    }
+    /*["a", "b", "c"]
+    ["a", "b", "e"] 
+    ["a", "c", "e"]
+    ["b", "c", "d"] 
+    ["b", "d", "e"] */
+
+
+    /*permutations of 4 elements grouped by 3*/
+    console.log('testing permutationsNK');
+    console.log(JSON.stringify(kombinatoricsJs.permutationsNK(['a', 'b', 'c', 'd'], 3)));
+    /*[["a","b","c"],["b","a","c"],["c","a","b"],["a","c","b"],["b","c","a"],["c","b","a"],["a","b","d"],
+    ["b","a","d"],["d","a","b"],["a","d","b"],["b","d","a"],["d","b","a"],["a","c","d"],["c","a","d"],
+    ["d","a","c"],["a","d","c"],["c","d","a"],["d","c","a"],["b","c","d"],["c","b","d"],["d","b","c"],
+    ["b","d","c"],["c","d","b"],["d","c","b"]] */
+
+
+    /*permutations of 3 elements (two repeated twice) grouped by 3*/
+    console.log('testing permutationsNKmultisets');
+
+    console.log(JSON.stringify(kombinatoricsJs.permutationsNKMultiSets(['a', 'b', 'b', 'c', 'c'], 3)));
+    /*[["b","a","b"],["b","b","a"],["a","c","b"],["b","a","c"],["b","c","a"],["c","a","b"],
+    ["c","b","a"],["c","a","c"],["c","c","a"],["b","c","b"],["c","b","b"],["c","b","c"],["c","c","b"]] */
+
 });
