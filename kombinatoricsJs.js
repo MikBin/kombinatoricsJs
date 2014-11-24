@@ -215,7 +215,7 @@
                 }
             },
             shuffle: function() {
-                kombinatoricsJs.shuffle(this.getArray());
+                shuffle(this.getArray());
             },
             getArray: function() {
                 return this._array;
@@ -229,13 +229,14 @@
          *@param
          *@return
          */
-        kombinatoricsJs.indexArray = function(l) {
+        var indexArray;
+        kombinatoricsJs.indexArray = indexArray = function(l) {
             var arr, len;
 
-            if (!isNaN(l)) {
-                if (l <= 256) {
+            if (!isNaN(l) || l.buffer instanceof ArrayBuffer || Array.isArray(l)) {
+                if (l < 256) {
                     arr = new Uint8Array(l);
-                } else if (l <= 65536) {
+                } else if (l < 65536) {
                     arr = new Uint16Array(l);
                 } else {
                     arr = new Uint32Array(l);
@@ -243,8 +244,6 @@
                 for (var i = 0; i < l; ++i) {
                     arr[i] = i;
                 }
-            } else if (Array.isArray(l)) {
-                arr = l.slice();
             } else {
                 return false;
             }
@@ -299,8 +298,8 @@
 
             var n = list.length;
 
-            var _index = kombinatoricsJs.indexArray(k).getArray();
-            var beginIndex = kombinatoricsJs.indexArray(k).getArray();
+            var _index = indexArray(k).getArray();
+            var beginIndex = indexArray(k).getArray();
 
             var _collection = list.slice();
             var combination = new Array(k);
@@ -341,11 +340,14 @@
                     return combination.slice();
 
                 },
+                getIndex: function() {
+                    return indexArray(_index).getArray();
+                },
                 getCount: function() {
                     return count;
                 },
                 reset: function() {
-                    _index = kombinatoricsJs.indexArray(k).getArray();
+                    _index = indexArray(k).getArray();
                     setCombination();
                     count = 0;
                 }
@@ -493,6 +495,7 @@
             var temp = items[i];
             items[i] = items[j];
             items[j] = temp;
+
         }
 
         /*standard callback slices items and returns it*/
@@ -514,7 +517,7 @@
             }
         }
 
-
+        kombinatoricsJs.heapPermute = heapPermute;
 
         var permutations = function(list) {
             var p = kombinatoricsJs.indexArray(list.length).getArray();
@@ -603,7 +606,7 @@
 
         var makeIndex = function(list) {
             var n = list.length;
-            var index = kombinatoricsJs.indexArray(n).getArray();
+            var index = indexArray(n).getArray();
             var j = 0,
                 k = 0;
             /*initializaition*/
@@ -622,8 +625,8 @@
 
             var n = list.length;
 
-            var _index = kombinatoricsJs.indexArray(n).getArray();
-            var beginIndex = kombinatoricsJs.indexArray(n).getArray();
+            var _index = indexArray(n).getArray();
+            var beginIndex = indexArray(n).getArray();
 
             var _collection = list.slice();
             var permutation = list.slice();
@@ -662,11 +665,14 @@
                     return permutation.slice();
 
                 },
+                getIndex: function() {
+                    return indexArray(_index).getArray();
+                },
                 getCount: function() {
                     return count;
                 },
                 reset: function() {
-                    _index = kombinatoricsJs.indexArray(n).getArray();
+                    _index = indexArray(n).getArray();
                     setPermutation();
                     count = 0;
                 }
