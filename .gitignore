@@ -1,4 +1,9 @@
-notUsed.js
-README.md~
-.gitignore~
-LICENCE.txt~
+.idea
+*.*~
+*.DS_Store
+lodash.js
+*.txt
+*.pdf
+*.odt
+*.log
+

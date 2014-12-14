@@ -18,23 +18,22 @@
  */
 (function(name, definition, context, dependencies, nameSpace) {
 
+    var strName, deps = {};
     if (typeof module === 'object' && module['exports']) {
         if (dependencies && require) {
 
             /*store dependencies here*/
-            var deps = {};
             for (var i = 0; i < dependencies.length; i++) {
-
-                deps[dependencies[i]] = require(dependencies[i]);
+                strName = dependencies[i].split('/');
+                strName = strName[strName.length - 1];
+                deps[strName] = require(dependencies[i]);
             }
         }
         /*to avoid circular dependencies issues in nodejs, the object pointed by module.exports is passed to the factory*/
-        return definition.call(deps, module['exports']);
+        return module['exports'] = definition.call(deps, module['exports']);
 
     } else if ((typeof context['define'] !== 'undefined') && (typeof context['define'] === 'function') && context['define']['amd']) {
         define(name, (dependencies || []), function() {
-            /*store dependencies here*/
-            var strName, deps = {};
 
             for (var i = 0; i < dependencies.length; ++i) {
                 strName = dependencies[i].split('/');
@@ -46,12 +45,11 @@
     } else {
         /*context is browser global; if nameSpace is defined, then bind the library to it*/
         if (nameSpace && context[nameSpace]) {
-
             context[nameSpace][name] = {};
-            return definition(context[nameSpace][name], nameSpace);
+            return context[nameSpace][name] = definition(context[nameSpace][name], nameSpace);
         } else {
             context[name] = {};
-            return definition(context[name]);
+            return context[name] = definition(context[name]);
         }
     }
 })('kombinatoricsJs', function(myself, nameSpace) {
