@@ -35,8 +35,8 @@ $(document).ready(function() {
         countArrayTest[j].time = (new Date()).getTime();
 
         for (i = 0; i < cycles; ++i) {
-            n = ~~ (maxValue * Math.random());
-            k = ~~ (maxValue * Math.random());
+            n = ~~(maxValue * Math.random());
+            k = ~~(maxValue * Math.random());
             if (n < k) {
                 temp = k;
                 n = k;
@@ -164,8 +164,8 @@ $(document).ready(function() {
     ["b","c","c","a","b"],["b","c","c","b","a"],["c","a","b","b","c"],["c","a","b","c","b"],["c","a","c","b","b"],
     ["c","b","a","b","c"],["c","b","a","c","b"],["c","b","b","a","c"],["c","b","b","c","a"],["c","b","c","a","b"],
     ["c","b","c","b","a"],["c","c","a","b","b"],["c","c","b","a","b"],["c","c","b","b","a"]]*/
-
-
+console.log(kombinatoricsJs.permutationsMultiSets(['a', 'b', 'b', 'c', 'c']).length);
+console.log(kombinatoricsJs.permutationsMultiSets(['b', 'a', 'b', 'c', 'c']).length);
     /*combinations of 5 grouped by 3; repeated elements in input sets generates duplicated combinations*/
     /*use combinationMultiSets in case of repeated elements*/
     var combinations = kombinatoricsJs.combinations(['a', 'b', 'c', 'd', 'e'], 3);
@@ -173,19 +173,32 @@ $(document).ready(function() {
     /*[["a","b","c"],["a","b","d"],["a","b","e"],["a","c","d"],["a","c","e"],["a","d","e"],["b","c","d"],["b","c","e"],["b","d","e"],["c","d","e"]] */
 
     /*multicombinations: 1 repeated element allowed foreach element in the set; grouped by 4*/
-    var multicombinations = kombinatoricsJs.multiCombinations(['a', 'b', 'c', 'd'], 4, 1);
+    var multicombinations = kombinatoricsJs.multiCombinations(['a', 'b', 'c', 'd'], 4, 3);
     console.log(JSON.stringify(multicombinations));
     /*[["a","a","b","b"],["a","a","b","c"],["a","a","b","d"],["a","a","c","c"],["a","a","c","d"],
     ["a","a","d","d"],["a","b","b","c"],["a","b","b","d"],["a","b","c","c"],["a","b","c","d"],
     ["a","b","d","d"],["a","c","c","d"],["a","c","d","d"],["b","b","c","c"],["b","b","c","d"],
     ["b","b","d","d"],["b","c","c","d"],["b","c","d","d"],["c","c","d","d"]] */
 
+console.log(kombinatoricsJs.multiCombinations([1,2,3,4,5,6], 5, 0));
+console.log(kombinatoricsJs.multiCombinations([1,2,3,4,5,6], 5, 1));
+console.log(kombinatoricsJs.multiCombinations([1,2,3,4,5,6], 5, 2));
+console.log(kombinatoricsJs.multiCombinations([1,2,3,4,5,6], 5, 3));
+console.log(kombinatoricsJs.multiCombinations([1,2,3,4,5,6], 5, 4));
+var c53 = kombinatoricsJs.multiCombinations([1,2,3,4,5,6], 5, 3).map(function(el) { return el.sort().join('');});
+var c54 = kombinatoricsJs.multiCombinations([1,2,3,4,5,6], 5, 4).map(function(el) { return el.sort().join('');});
 
     /*combinationMultiSets: repetitions allowed are implicit in the set of elements; grouped by 4*/
     var combMultiSets = kombinatoricsJs.combinationsMultiSets(['a', 'b', 'b', 'c', 'c', 'c', 'd'], 4);
     console.log(JSON.stringify(combMultiSets));
     /*[["a","b","b","c"],["a","b","b","d"],["a","b","c","c"],["a","b","c","d"],["a","c","c","c"],
     ["a","c","c","d"],["b","b","c","c"],["b","b","c","d"],["b","c","c","c"],["b","c","c","d"],["c","c","c","d"]] */
+
+ c54 = kombinatoricsJs.combinationsMultiSets([1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6], 5).map(function(el) { return el.sort().join('');});;
+ c53 = kombinatoricsJs.combinationsMultiSets([1,1,1,2,2,2,3,3,3,4,4,4,5,5,5,6,6,6], 5).map(function(el) { return el.sort().join('');});;
+
+var diff = c54.filter(function(el) {return c53.indexOf(el)===-1;});
+console.log(diff);
 
 
     var c = 0;
@@ -269,4 +282,8 @@ $(document).ready(function() {
     /*[["b","a","b"],["b","b","a"],["a","c","b"],["b","a","c"],["b","c","a"],["c","a","b"],
     ["c","b","a"],["c","a","c"],["c","c","a"],["b","c","b"],["c","b","b"],["c","b","c"],["c","c","b"]] */
 
+
+
+    //var multicombinations2 = kombinatoricsJs.multiCombinations([2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A'], 5, 2);
+   // console.log('cards multicombinations', JSON.stringify(multicombinations2));
 });

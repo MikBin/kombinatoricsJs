@@ -147,7 +147,7 @@
         kombinatoricsJs.shuffle = shuffle = function(ar) {
             var i, r, tmp, l = ar.length;
             for (i = 0; i < l; ++i) {
-                r = ~~ (Math.random() * (l - i)) + i;
+                r = ~~(Math.random() * (l - i)) + i;
                 tmp = ar[i];
                 ar[i] = ar[r];
                 ar[r] = tmp;
@@ -382,6 +382,7 @@
             return cnt;
         }
 
+        kombinatoricsJs.pick = pick;
         /**
          *@method
          *
@@ -432,6 +433,9 @@
             return 1;
         }
 
+
+        kombinatoricsJs.pickMulti = pickMulti;
+
         /**
          *@method
          *
@@ -448,6 +452,7 @@
             });
 
             return multiComb;
+            /*TODO there must be a subtle bug, use combinations mutlisets by expanding the _collection*/
         }
 
 
@@ -728,8 +733,28 @@
 
         kombinatoricsJs.permutationsNKMultiSets = permutationsNKMultiSets;
 
+        const crossProduct = (list, k) => {
+            if (k < 1) return list;
+            let crossProdList = new Array(Math.pow(list.length, k));
+            let l = crossProdList.length;
+            let ln = list.length;
 
+            for (let i = 0; i < l; ++i) {
+                let tmpList = [];
+                let number = i;
+                for (let j = k - 1; j >= 0; --j) {
+                    let digit = number % ln;
+                    number = Math.floor(number / ln);
+                    tmpList[j] = list[digit];
+                }
+                crossProdList[i] = tmpList;
+            }
+            return crossProdList;
+        }
 
+        kombinatoricsJs.crossProduct = crossProduct;
+
+        //console.log(crossProduct([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 3));
 
         var version = 1.0;
 

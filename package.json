@@ -1,0 +1,14 @@
+{
+    "name": "kombinatoricsjs",
+    "version": "0.1.1",
+    "description": "combinatorics routines",
+    "main": "lib/main-es6.js",
+    "main-es6": "lib/main-es6.js",
+    "keywords": [
+        "kombinatorics"
+    ],
+    "author": "Michele Bini <mikbin80@gmail.com>",
+    "license": "MIT",
+    "repository": "",
+    "jsnext:main": "./src/main.js"
+}
