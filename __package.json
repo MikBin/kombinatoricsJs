@@ -1,0 +1,31 @@
+{
+    "name": "kombinatoricsjs",
+    "version": "0.1.2",
+    "description": "combinatorics routines",
+    "main": "lib/main.es6.js",
+    "main-es6": "lib/main.es6.js",
+    "scripts": {
+        "test": "ava-ts",
+        "build": "rollup -c"
+    },
+    "keywords": [
+        "kombinatorics",
+        "combinatorics"
+    ],
+    "author": "Michele Bini <mikbin80@gmail.com>",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/MikBin/kombinatoricsJs.git"
+    },
+    "jsnext:main": "./src/main.js",
+    "devDependencies": {
+        "ava": "^0.25.0",
+        "ava-ts": "^0.25.1",
+        "rollup-plugin-commonjs": "^9.1.3",
+        "rollup-plugin-node-resolve": "^3.3.0",
+        "rollup-plugin-typescript2": "^0.15.1",
+        "ts-node": "^7.0.1",
+        "typescript": "^2.9.2"
+    }
+}
