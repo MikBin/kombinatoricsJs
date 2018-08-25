@@ -10,3 +10,13 @@ compiled
 .awcache
 .rpt2_cache
 docs
+.idea
+*.*~
+*.DS_Store
+lodash.js
+*.txt
+*.pdf
+*.odt
+*.log
+
+
