@@ -1,4 +1,7 @@
+const kombinatoricsJs = kombinatoricsjs;
 $(document).ready(function() {
+
+
 
     /*setting up permutations and combinations*/
     var pNK = kombinatoricsJs.pNK;
@@ -356,8 +359,8 @@ function createHash(numberOfDistinct, numberOfPlaces, repetitions) {
     }
     return hashes;
 }
-
-//13,5,3 [0, 1, 5, 22, 80, 270, 781, 1944, 4714, 11188, 24740, 41544, 91198]
-//13,7,3 [ 0, 1, 5, 22, 94, 400, 1696, 6015, 20795, 70460, 180564, 561440, 1340120 ]
+console.log(createHash(6, 3, 2));
+//13,5,3[0, 1, 5, 22, 94, 312, 992, 2422, 5624, 12522, 19998, 43258, 79415]
+//13,7,3 
 //6,5,4 [0, 1, 6, 31, 108, 366]  
 //6,3,2 [0, 1, 4, 13, 32, 71]

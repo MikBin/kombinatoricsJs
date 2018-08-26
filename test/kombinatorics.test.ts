@@ -281,5 +281,25 @@ test('permutationsNkmultisets generator', t => {
   ])
   t.deepEqual(KOMB.permutationsNKMultiSets(['a', 'a', 'b', 'b', 'c'], 1), [['a'], ['b'], ['c']])
   t.deepEqual(KOMB.permutationsNKMultiSets(['a', 'b', 'c'], 1), [['a'], ['b'], ['c']])
-  console.log(Pm)
+  // console.log(Pm)
+})
+
+test('cross product generator', t => {
+  let Cp = KOMB.crossProduct(['a', 'b', 'c'], 2)
+  t.deepEqual(Cp, [
+    ['a', 'a'],
+    ['a', 'b'],
+    ['a', 'c'],
+    ['b', 'a'],
+    ['b', 'b'],
+    ['b', 'c'],
+    ['c', 'a'],
+    ['c', 'b'],
+    ['c', 'c']
+  ])
+
+  Cp = KOMB.crossProduct(['a', 'b', 'c'], 1)
+  t.deepEqual(Cp, [['a'], ['b'], ['c']])
+  Cp = KOMB.crossProduct(['a', 'b', 'c'], 3)
+  t.is(Cp.length, 27)
 })

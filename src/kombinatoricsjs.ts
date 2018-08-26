@@ -586,15 +586,15 @@ export const permutationsIterator = (list: any[]) => {
 }
 
 export const permutationsMultiSets = (list: any[]): any[][] => {
-  var n = list.length,
+  let n = list.length,
     index = indexArray(n)
-  var data = [list[0]],
+  let data = [list[0]],
     perm: any[][] = [],
     j = 0,
     k = 0,
     permutationMultiSet: any[][] = [list.slice()]
   /*initializaition*/
-  for (var i = 1; i < n; ++i) {
+  for (let i: number = 1; i < n; ++i) {
     if (list[i] === list[i - 1]) {
       index[i] = index[i - 1] = j
     } else {
@@ -616,9 +616,9 @@ export const permutationsMultiSets = (list: any[]): any[][] => {
 }
 
 export const permutationsNKMultiSets = (list: any[], k: number): any[][] => {
-  var permsNK: any[][] = []
-  var _combsNK = combinationsMultiSets(list, k)
-  for (var i = 0; i < _combsNK.length; ++i) {
+  let permsNK: any[][] = []
+  let _combsNK = combinationsMultiSets(list, k)
+  for (let i: number = 0; i < _combsNK.length; ++i) {
     permsNK.push(permutationsMultiSets(_combsNK[i]))
   }
   return matrixToArray(permsNK)
@@ -627,15 +627,15 @@ export const permutationsNKMultiSets = (list: any[], k: number): any[][] => {
 export const crossProduct = (list: any[], k: number): any[][] => {
   if (k < 1) return list
   let crossProdList: any[][] = new Array(Math.pow(list.length, k))
-  let l = crossProdList.length
-  let ln = list.length
+  let l: number = crossProdList.length
+  let ln: number = list.length
 
-  for (let i = 0; i < l; ++i) {
+  for (let i: number = 0; i < l; ++i) {
     let tmpList: any[][] = []
-    let number = i
+    let N: number = i
     for (let j = k - 1; j >= 0; --j) {
-      let digit = number % ln
-      number = Math.floor(number / ln)
+      let digit: number = N % ln
+      N = Math.floor(N / ln)
       tmpList[j] = list[digit]
     }
     crossProdList[i] = tmpList
@@ -643,4 +643,4 @@ export const crossProduct = (list: any[], k: number): any[][] => {
   return crossProdList
 }
 
-export const version = 1.0
+export const version: string = '1.0.1'
