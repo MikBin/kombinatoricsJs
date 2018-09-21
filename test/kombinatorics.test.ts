@@ -85,6 +85,97 @@ test('permutations iterator', t => {
   t.deepEqual(iterator.getPerm(5), ['c', 'b', 'a'])
 })
 
+test('generateFirstMultiSetIndex', t => {
+  let res = KOMB.generateFirstMultiSetIndex(5, 4, [3, 3, 3, 3, 3])
+  t.deepEqual(
+    {
+      limitsCounter: [3, 1, 0, 0, 0],
+      index: [0, 0, 0, 1]
+    },
+    res
+  )
+})
+
+test('combination multi set iterator next function', t => {
+  let startIdx = [0, 0, 0, 1]
+  let limitsCounter = [3, 1, 0, 0, 0]
+  let next = KOMB.multiSetCombinationsStep(startIdx, 4, [3, 3, 3, 3, 3], limitsCounter)
+  t.deepEqual(next, [0, 0, 0, 2])
+  let all = [[0, 0, 0, 1], [0, 0, 0, 2]]
+  while (next) {
+    next = KOMB.multiSetCombinationsStep(startIdx, 4, [3, 3, 3, 3, 3], limitsCounter)
+    if (next) all.push(next.slice())
+  }
+  t.deepEqual(all, [
+    [0, 0, 0, 1],
+    [0, 0, 0, 2],
+    [0, 0, 0, 3],
+    [0, 0, 0, 4],
+    [0, 0, 1, 1],
+    [0, 0, 1, 2],
+    [0, 0, 1, 3],
+    [0, 0, 1, 4],
+    [0, 0, 2, 2],
+    [0, 0, 2, 3],
+    [0, 0, 2, 4],
+    [0, 0, 3, 3],
+    [0, 0, 3, 4],
+    [0, 0, 4, 4],
+    [0, 1, 1, 1],
+    [0, 1, 1, 2],
+    [0, 1, 1, 3],
+    [0, 1, 1, 4],
+    [0, 1, 2, 2],
+    [0, 1, 2, 3],
+    [0, 1, 2, 4],
+    [0, 1, 3, 3],
+    [0, 1, 3, 4],
+    [0, 1, 4, 4],
+    [0, 2, 2, 2],
+    [0, 2, 2, 3],
+    [0, 2, 2, 4],
+    [0, 2, 3, 3],
+    [0, 2, 3, 4],
+    [0, 2, 4, 4],
+    [0, 3, 3, 3],
+    [0, 3, 3, 4],
+    [0, 3, 4, 4],
+    [0, 4, 4, 4],
+    [1, 1, 1, 2],
+    [1, 1, 1, 3],
+    [1, 1, 1, 4],
+    [1, 1, 2, 2],
+    [1, 1, 2, 3],
+    [1, 1, 2, 4],
+    [1, 1, 3, 3],
+    [1, 1, 3, 4],
+    [1, 1, 4, 4],
+    [1, 2, 2, 2],
+    [1, 2, 2, 3],
+    [1, 2, 2, 4],
+    [1, 2, 3, 3],
+    [1, 2, 3, 4],
+    [1, 2, 4, 4],
+    [1, 3, 3, 3],
+    [1, 3, 3, 4],
+    [1, 3, 4, 4],
+    [1, 4, 4, 4],
+    [2, 2, 2, 3],
+    [2, 2, 2, 4],
+    [2, 2, 3, 3],
+    [2, 2, 3, 4],
+    [2, 2, 4, 4],
+    [2, 3, 3, 3],
+    [2, 3, 3, 4],
+    [2, 3, 4, 4],
+    [2, 4, 4, 4],
+    [3, 3, 3, 4],
+    [3, 3, 4, 4],
+    [3, 4, 4, 4]
+  ])
+  /*@TODO test non uniforms limits counts*/
+})
+
 test('combinations generator ', t => {
   let C = KOMB.combinations(['a', 'b', 'c'], 1)
 
@@ -131,15 +222,17 @@ test('permutationsNK generator ', t => {
 })
 
 test('multiCombinations generator ', t => {
-  t.deepEqual(KOMB.multiCombinations(['a', 'b', 'c'], 3, 0), [['a', 'b', 'c']])
-  t.deepEqual(KOMB.multiCombinations(['a', 'b', 'c', 'd'], 3, 0), [
+  let K = KOMB.multiCombinations(['a', 'b', 'c'], 3, 1)
+
+  t.deepEqual(K, [['a', 'b', 'c']])
+  t.deepEqual(KOMB.multiCombinations(['a', 'b', 'c', 'd'], 3, 1), [
     ['a', 'b', 'c'],
     ['a', 'b', 'd'],
     ['a', 'c', 'd'],
     ['b', 'c', 'd']
   ])
 
-  let K = KOMB.multiCombinations(['a', 'b', 'c', 'd'], 4, 2)
+  K = KOMB.multiCombinations(['a', 'b', 'c', 'd'], 4, 3)
   t.is(K.length, 31)
   t.deepEqual(K, [
     ['a', 'a', 'a', 'b'],
@@ -174,6 +267,9 @@ test('multiCombinations generator ', t => {
     ['c', 'c', 'd', 'd'],
     ['c', 'd', 'd', 'd']
   ])
+
+  K = KOMB.multiCombinations([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], 7, 4)
+  t.is(K.length, 49205)
 })
 
 test('combinationsMultiSets generator ', t => {

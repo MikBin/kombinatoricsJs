@@ -139,26 +139,6 @@ export const shuffle = (ar: any[]): void => {
  *@param
  *@return
  */
-
-export const boxMullerShuffle = (ar: any[]): void => {
-  let i: number,
-    r1: number,
-    r2: number,
-    tmp: any,
-    l: number = ar.length
-  for (i = 0; i < l / 2; ++i) {
-    ;[r1, r2] = rnd_bmt()
-    r1 = ~~((r1 + 1) * l)
-    r2 = ~~((r2 + 1) * l)
-    ;[ar[r1], ar[r2]] = [ar[r2], ar[r1]]
-  }
-}
-/**
- *@method
- *
- *@param
- *@return
- */
 export const normalRandom = {
   BoxMuller: rnd_bmt,
   CentralLimit: rnd_snd
@@ -366,24 +346,183 @@ export const pickMulti = (
   return 1
 }
 
+interface multiSetIteratorSetUp {
+  limitsCounter: number[]
+  index: number[]
+}
+
+export const generateFirstMultiSetIndex = (
+  n: number,
+  k: number,
+  limits: number[]
+): multiSetIteratorSetUp => {
+  let index: number[] = new Array(k)
+  let limitsCounter: number[] = new Array(n).fill(0)
+  let lastVal: number = 0
+  for (let i = 0; i < k; i++) {
+    index[i] = lastVal
+    limitsCounter[lastVal]++
+    if (limitsCounter[lastVal] == limits[lastVal]) {
+      lastVal++
+    }
+  }
+
+  return {
+    limitsCounter: limitsCounter,
+    index: index
+  }
+}
+
+export const multiSetCombinationsStep = (
+  index: number[],
+  maxVal: number,
+  limits: number[],
+  limitsCount: number[]
+) => {
+  let k: number = index.length - 1
+
+  if (index[k] < maxVal) {
+    limitsCount[index[k]]--
+    index[k]++
+    limitsCount[index[k]]++
+  } else {
+    /*find the first to increment*/
+    let lastMaxVal = maxVal
+    let lastMaxValCounter = 0
+    while (index[k] == lastMaxVal) {
+      limitsCount[index[k]]--
+      index[k] = 0
+      k--
+      lastMaxValCounter++
+      if (lastMaxValCounter == limits[lastMaxVal]) {
+        lastMaxVal--
+        lastMaxValCounter = 0
+      }
+    }
+    if (k == -1) {
+      return false
+      /*ended*/
+    }
+    limitsCount[index[k]]--
+    index[k]++
+    limitsCount[index[k]]++
+    k++
+    /*now set the following elements*/
+    while (k < index.length) {
+      let lastVal = index[k - 1]
+      if (limitsCount[lastVal] < limits[lastVal]) {
+        index[k] = lastVal
+        limitsCount[lastVal]++
+      } else if (lastVal < maxVal) {
+        lastVal++
+        index[k] = lastVal
+        limitsCount[lastVal]++
+      } else if ((k = index.length - 1)) {
+        return false
+      }
+      k++
+    }
+  }
+  return index
+}
+
+export const multiSetUniformIndexCombinationsIterator = (n: number, k: number, r: number) => {
+  let maxVal: number = n - 1
+  let limits = new Array(n).fill(r)
+  let { limitsCounter, index } = generateFirstMultiSetIndex(n, k, limits)
+  return () => {
+    return multiSetCombinationsStep(index, maxVal, limits, limitsCounter)
+  }
+}
+
+/*@TODO pass limits as argument to manage non uniform cases*/
+export const multiSetCombinationsIterator = (list: any[], k: number, repetitions: number) => {
+  let n: number = list.length
+  let maxVal = list.length - 1
+  let limits = new Array(list.length).fill(repetitions)
+  let { limitsCounter, index } = generateFirstMultiSetIndex(list.length, k, limits)
+  let _index: number[] = index.slice()
+  let _collection = list.slice()
+  let combination = new Array(k)
+  let count = 0
+
+  let setCombination = () => {
+    for (let i = 0; i < k; ++i) {
+      combination[i] = _collection[_index[i]]
+    }
+  }
+
+  setCombination()
+  return {
+    next: () => {
+      if (multiSetCombinationsStep(_index, maxVal, limits, limitsCounter)) {
+        count++
+        setCombination()
+        return 1
+      } else {
+        return 0
+      }
+    },
+    getComb: function(cnt: number = 0) {
+      if (cnt > 0) {
+        let c = cnt - count
+        let step
+        while (c > 0 && (step = multiSetCombinationsStep(_index, maxVal, limits, limitsCounter))) {
+          c--
+          count++
+        }
+
+        if (!step) return 0
+        setCombination()
+      }
+
+      return combination.slice()
+    },
+    getIndex: () => {
+      return _index
+    },
+    getCount: () => {
+      return count
+    },
+    reset: () => {
+      _index = index.slice()
+      setCombination()
+      count = 0
+    }
+  }
+}
+
 /**
  *@method
  *
  *@param
  *@return
  */
-export const multiCombinations = (_collection: any[], n: number, repetition: number): any[][] => {
+export const multiCombinations = (_collection: any[], k: number, repetition: number): any[][] => {
   let multiComb: any[][] = []
+  let maxVal = _collection.length - 1
+  let limits = new Array(_collection.length).fill(repetition)
+  let { limitsCounter, index } = generateFirstMultiSetIndex(_collection.length, k, limits)
 
+  //first element
+  multiComb.push(index.map(v => _collection[v]))
+  let next: number[] | boolean = []
+
+  while ((next = multiSetCombinationsStep(index, maxVal, limits, limitsCounter))) {
+    multiComb.push(next.map(v => _collection[v]))
+  }
+
+  /*
   pick(n, [], 0, _collection, repetition, 0, (c: any[]) => {
     multiComb.push(c.slice())
   })
+*/
 
   return multiComb
 }
 
 /**
- *@method
+ *@method  @TODO to be implemented using iterative method like the one above
  *
  *@param
  *@return
@@ -460,6 +599,7 @@ export const permutations = (list: any[]): any[][] => {
   return perms
 }
 
+/*are called variations in some libraries*/
 export const permutationsNK = (list: any[], k: number): any[][] => {
   let permsNK: any[][] = []
   let _combsNK = combinations(list, k)
@@ -643,4 +783,4 @@ export const crossProduct = (list: any[], k: number): any[][] => {
   return crossProdList
 }
 
-export const version: string = '1.0.1'
+export const version: string = '1.0.3'

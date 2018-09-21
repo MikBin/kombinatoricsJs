@@ -359,7 +359,7 @@ function createHash(numberOfDistinct, numberOfPlaces, repetitions) {
     }
     return hashes;
 }
-console.log(createHash(6, 3, 2));
+console.log(createHash(4, 7, 7));
 //13,5,3[0, 1, 5, 22, 94, 312, 992, 2422, 5624, 12522, 19998, 43258, 79415]
 //13,7,3 
 //6,5,4 [0, 1, 6, 31, 108, 366]  

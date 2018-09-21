@@ -32,13 +32,6 @@ export declare const shuffle: (ar: any[]) => void;
  *@param
  *@return
  */
-export declare const boxMullerShuffle: (ar: any[]) => void;
-/**
- *@method
- *
- *@param
- *@return
- */
 export declare const normalRandom: {
     BoxMuller: () => number[];
     CentralLimit: () => number;
@@ -73,15 +66,29 @@ export declare const pick: (n: number, got: any[], pos: number, from: any[], lim
  */
 export declare const combinations: genericListFn;
 export declare const pickMulti: (n: number, got: any[], pos: number, from: any[], limit: number[], limitCount: number[], callBack: Function) => number;
+interface multiSetIteratorSetUp {
+    limitsCounter: number[];
+    index: number[];
+}
+export declare const generateFirstMultiSetIndex: (n: number, k: number, limits: number[]) => multiSetIteratorSetUp;
+export declare const multiSetCombinationsStep: (index: number[], maxVal: number, limits: number[], limitsCount: number[]) => false | number[];
+export declare const multiSetUniformIndexCombinationsIterator: (n: number, k: number, r: number) => () => false | number[];
+export declare const multiSetCombinationsIterator: (list: any[], k: number, repetitions: number) => {
+    next: () => 1 | 0;
+    getComb: (cnt?: number) => any[] | 0;
+    getIndex: () => number[];
+    getCount: () => number;
+    reset: () => void;
+};
 /**
  *@method
  *
  *@param
  *@return
  */
-export declare const multiCombinations: (_collection: any[], n: number, repetition: number) => any[][];
+export declare const multiCombinations: (_collection: any[], k: number, repetition: number) => any[][];
 /**
- *@method
+ *@method  @TODO to be implemented using iterative method like the one above
  *
  *@param
  *@return
@@ -100,5 +107,5 @@ export declare const permutationsIterator: (list: any[]) => {
 export declare const permutationsMultiSets: (list: any[]) => any[][];
 export declare const permutationsNKMultiSets: (list: any[], k: number) => any[][];
 export declare const crossProduct: (list: any[], k: number) => any[][];
-export declare const version = 1;
+export declare const version: string;
 export {};

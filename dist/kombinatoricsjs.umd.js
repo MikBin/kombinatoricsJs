@@ -113,21 +113,6 @@
    *@param
    *@return
    */
-  const boxMullerShuffle = (ar) => {
-      let i, r1, r2, l = ar.length;
-      for (i = 0; i < l / 2; ++i) {
-          [r1, r2] = rnd_bmt();
-          r1 = ~~((r1 + 1) * l);
-          r2 = ~~((r2 + 1) * l);
-          [ar[r1], ar[r2]] = [ar[r2], ar[r1]];
-      }
-  };
-  /**
-   *@method
-   *
-   *@param
-   *@return
-   */
   const normalRandom = {
       BoxMuller: rnd_bmt,
       CentralLimit: rnd_snd
@@ -293,21 +278,159 @@
       }
       return 1;
   };
+  const generateFirstMultiSetIndex = (n, k, limits) => {
+      let index = new Array(k);
+      let limitsCounter = (new Array(n)).fill(0);
+      let lastVal = 0;
+      for (let i = 0; i < k; i++) {
+          index[i] = lastVal;
+          limitsCounter[lastVal]++;
+          if (limitsCounter[lastVal] == limits[lastVal]) {
+              lastVal++;
+          }
+      }
+      return {
+          limitsCounter: limitsCounter,
+          index: index
+      };
+  };
+  const multiSetCombinationsStep = (index, maxVal, limits, limitsCount) => {
+      let k = index.length - 1;
+      if (index[k] < maxVal) {
+          limitsCount[index[k]]--;
+          index[k]++;
+          limitsCount[index[k]]++;
+      }
+      else {
+          /*find the first to increment*/
+          let lastMaxVal = maxVal;
+          let lastMaxValCounter = 0;
+          while (index[k] == lastMaxVal) {
+              limitsCount[index[k]]--;
+              index[k] = 0;
+              k--;
+              lastMaxValCounter++;
+              if (lastMaxValCounter == limits[lastMaxVal]) {
+                  lastMaxVal--;
+                  lastMaxValCounter = 0;
+              }
+          }
+          if (k == -1) {
+              return false;
+              /*ended*/
+          }
+          limitsCount[index[k]]--;
+          index[k]++;
+          limitsCount[index[k]]++;
+          k++;
+          /*now set the following elements*/
+          while (k < index.length) {
+              let lastVal = index[k - 1];
+              if (limitsCount[lastVal] < limits[lastVal]) {
+                  index[k] = lastVal;
+                  limitsCount[lastVal]++;
+              }
+              else if (lastVal < maxVal) {
+                  lastVal++;
+                  index[k] = lastVal;
+                  limitsCount[lastVal]++;
+              }
+              else if (k = index.length - 1) {
+                  return false;
+              }
+              k++;
+          }
+      }
+      return index;
+  };
+  const multiSetUniformIndexCombinationsIterator = (n, k, r) => {
+      let maxVal = n - 1;
+      let limits = (new Array(n)).fill(r);
+      let { limitsCounter, index } = generateFirstMultiSetIndex(n, k, limits);
+      return () => {
+          return multiSetCombinationsStep(index, maxVal, limits, limitsCounter);
+      };
+  };
+  /*@TODO pass limits as argument to manage non uniform cases*/
+  const multiSetCombinationsIterator = (list, k, repetitions) => {
+      let n = list.length;
+      let maxVal = list.length - 1;
+      let limits = (new Array(list.length)).fill(repetitions);
+      let { limitsCounter, index } = generateFirstMultiSetIndex(list.length, k, limits);
+      let _index = index.slice();
+      let _collection = list.slice();
+      let combination = new Array(k);
+      let count = 0;
+      let setCombination = () => {
+          for (let i = 0; i < k; ++i) {
+              combination[i] = _collection[_index[i]];
+          }
+      };
+      setCombination();
+      return {
+          next: () => {
+              if (multiSetCombinationsStep(_index, maxVal, limits, limitsCounter)) {
+                  count++;
+                  setCombination();
+                  return 1;
+              }
+              else {
+                  return 0;
+              }
+          },
+          getComb: function (cnt = 0) {
+              if (cnt > 0) {
+                  let c = cnt - count;
+                  let step;
+                  while (c > 0 && (step = multiSetCombinationsStep(_index, maxVal, limits, limitsCounter))) {
+                      c--;
+                      count++;
+                  }
+                  if (!step)
+                      return 0;
+                  setCombination();
+              }
+              return combination.slice();
+          },
+          getIndex: () => {
+              return _index;
+          },
+          getCount: () => {
+              return count;
+          },
+          reset: () => {
+              _index = index.slice();
+              setCombination();
+              count = 0;
+          }
+      };
+  };
   /**
    *@method
    *
    *@param
    *@return
    */
-  const multiCombinations = (_collection, n, repetition) => {
+  const multiCombinations = (_collection, k, repetition) => {
       let multiComb = [];
-      pick(n, [], 0, _collection, repetition, 0, (c) => {
-          multiComb.push(c.slice());
-      });
+      let maxVal = _collection.length - 1;
+      let limits = (new Array(_collection.length)).fill(repetition);
+      let { limitsCounter, index } = generateFirstMultiSetIndex(_collection.length, k, limits);
+      //first element
+      multiComb.push(index.map(v => _collection[v]));
+      let next = [];
+      while (next = multiSetCombinationsStep(index, maxVal, limits, limitsCounter)) {
+          multiComb.push(next.map(v => _collection[v]));
+      }
+      /*
+        pick(n, [], 0, _collection, repetition, 0, (c: any[]) => {
+          multiComb.push(c.slice())
+        })
+      */
       return multiComb;
   };
   /**
-   *@method
+   *@method  @TODO to be implemented using iterative method like the one above
    *
    *@param
    *@return
@@ -372,6 +495,7 @@
       }
       return perms;
   };
+  /*are called variations in some libraries*/
   const permutationsNK = (list, k) => {
       let permsNK = [];
       let _combsNK = combinations(list, k);
@@ -455,10 +579,10 @@
       return iterator;
   };
   const permutationsMultiSets = (list) => {
-      var n = list.length, index = indexArray(n);
-      var data = [list[0]], perm = [], j = 0, k = 0, permutationMultiSet = [list.slice()];
+      let n = list.length, index = indexArray(n);
+      let data = [list[0]], perm = [], j = 0, k = 0, permutationMultiSet = [list.slice()];
       /*initializaition*/
-      for (var i = 1; i < n; ++i) {
+      for (let i = 1; i < n; ++i) {
           if (list[i] === list[i - 1]) {
               index[i] = index[i - 1] = j;
           }
@@ -477,9 +601,9 @@
       return permutationMultiSet;
   };
   const permutationsNKMultiSets = (list, k) => {
-      var permsNK = [];
-      var _combsNK = combinationsMultiSets(list, k);
-      for (var i = 0; i < _combsNK.length; ++i) {
+      let permsNK = [];
+      let _combsNK = combinationsMultiSets(list, k);
+      for (let i = 0; i < _combsNK.length; ++i) {
           permsNK.push(permutationsMultiSets(_combsNK[i]));
       }
       return matrixToArray(permsNK);
@@ -492,17 +616,17 @@
       let ln = list.length;
       for (let i = 0; i < l; ++i) {
           let tmpList = [];
-          let number = i;
+          let N = i;
           for (let j = k - 1; j >= 0; --j) {
-              let digit = number % ln;
-              number = Math.floor(number / ln);
+              let digit = N % ln;
+              N = Math.floor(N / ln);
               tmpList[j] = list[digit];
           }
           crossProdList[i] = tmpList;
       }
       return crossProdList;
   };
-  const version = 1.0;
+  const version = '1.0.3';
 
   exports.factorial = factorial;
   exports.cNK = cNK;
@@ -512,7 +636,6 @@
   exports.memoize_pNK = memoize_pNK;
   exports.memoize_cNK = memoize_cNK;
   exports.shuffle = shuffle;
-  exports.boxMullerShuffle = boxMullerShuffle;
   exports.normalRandom = normalRandom;
   exports.indexArray = indexArray;
   exports.binomIncrement = binomIncrement;
@@ -520,6 +643,10 @@
   exports.pick = pick;
   exports.combinations = combinations;
   exports.pickMulti = pickMulti;
+  exports.generateFirstMultiSetIndex = generateFirstMultiSetIndex;
+  exports.multiSetCombinationsStep = multiSetCombinationsStep;
+  exports.multiSetUniformIndexCombinationsIterator = multiSetUniformIndexCombinationsIterator;
+  exports.multiSetCombinationsIterator = multiSetCombinationsIterator;
   exports.multiCombinations = multiCombinations;
   exports.combinationsMultiSets = combinationsMultiSets;
   exports.heapPermute = heapPermute;
