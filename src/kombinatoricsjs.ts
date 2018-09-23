@@ -512,22 +512,47 @@ export const multiCombinations = (_collection: any[], k: number, repetition: num
     multiComb.push(next.map(v => _collection[v]))
   }
 
-  /*
-  pick(n, [], 0, _collection, repetition, 0, (c: any[]) => {
-    multiComb.push(c.slice())
-  })
-*/
-
   return multiComb
 }
 
 /**
- *@method  @TODO to be implemented using iterative method like the one above
+ *@method
  *
  *@param
  *@return
  */
-export const combinationsMultiSets = (_collection: any[], n: number): any[][] => {
+export const combinationsMultiSets = (_collection: any[], k: number): any[][] => {
+  let l: number = _collection.length,
+    limits: number[] = [1],
+    list: any[] = [_collection[0]],
+    j: number = 0
+
+  for (let i: number = 1; i < l; ++i) {
+    if (_collection[i] === _collection[i - 1]) {
+      limits[j]++
+    } else {
+      j++
+      list[j] = _collection[i]
+      limits.push(1)
+    }
+  }
+  let maxVal = list.length - 1
+  let { limitsCounter, index } = generateFirstMultiSetIndex(list.length, k, limits)
+
+  let multiComb: any[][] = []
+
+  //first element
+  multiComb.push(index.map(v => list[v]))
+  let next: number[] | boolean = []
+
+  while ((next = multiSetCombinationsStep(index, maxVal, limits, limitsCounter))) {
+    multiComb.push(next.map(v => list[v]))
+  }
+
+  return multiComb
+}
+
+const old_pick_version_combinationsMultiSets = (_collection: any[], n: number): any[][] => {
   var l = _collection.length,
     limitCount = [0],
     limits = [0],
@@ -755,6 +780,10 @@ export const permutationsMultiSets = (list: any[]): any[][] => {
   return permutationMultiSet
 }
 
+/*@TODO implement generation index of permutations multisets 
+start with combinations iterator/generator and for each index slice it use next permutation
+
+*/
 export const permutationsNKMultiSets = (list: any[], k: number): any[][] => {
   let permsNK: any[][] = []
   let _combsNK = combinationsMultiSets(list, k)

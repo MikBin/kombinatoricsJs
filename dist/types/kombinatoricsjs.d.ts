@@ -88,12 +88,12 @@ export declare const multiSetCombinationsIterator: (list: any[], k: number, repe
  */
 export declare const multiCombinations: (_collection: any[], k: number, repetition: number) => any[][];
 /**
- *@method  @TODO to be implemented using iterative method like the one above
+ *@method
  *
  *@param
  *@return
  */
-export declare const combinationsMultiSets: (_collection: any[], n: number) => any[][];
+export declare const combinationsMultiSets: (_collection: any[], k: number) => any[][];
 export declare const heapPermute: (n: number, items: any[], callBack: Function) => void;
 export declare const permutations: (list: any[]) => any[][];
 export declare const permutationsNK: (list: any[], k: number) => any[][];

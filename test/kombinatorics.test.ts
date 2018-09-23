@@ -274,13 +274,12 @@ test('multiCombinations generator ', t => {
 
 test('combinationsMultiSets generator ', t => {
   //console.log(KOMB.combinationsMultiSets(["a", "a", "a", "b", "b", "b", "c", "c", "c", "d", "d", "d"], 4));
-
-  t.deepEqual(KOMB.combinationsMultiSets(['a', 'b', 'c'], 3), [['a', 'b', 'c']])
-  t.deepEqual(KOMB.combinationsMultiSets(['a', 'a', 'c'], 2), [['a', 'a'], ['a', 'c']])
-  let K = KOMB.combinationsMultiSets(
-    ['a', 'a', 'a', 'b', 'b', 'b', 'c', 'c', 'c', 'd', 'd', 'd'],
-    4
-  )
+  let K = KOMB.combinationsMultiSets(['a', 'b', 'c'], 3)
+  t.deepEqual(K, [['a', 'b', 'c']])
+  K = KOMB.combinationsMultiSets(['a', 'a', 'c'], 2)
+  t.deepEqual(K, [['a', 'a'], ['a', 'c']])
+  console.log(K)
+  K = KOMB.combinationsMultiSets(['a', 'a', 'a', 'b', 'b', 'b', 'c', 'c', 'c', 'd', 'd', 'd'], 4)
   t.is(K.length, 31)
   t.deepEqual(K, [
     ['a', 'a', 'a', 'b'],
@@ -365,6 +364,7 @@ test('permutations multiset generator', t => {
 
 test('permutationsNkmultisets generator', t => {
   let Pm = KOMB.permutationsNKMultiSets(['a', 'a', 'b', 'b', 'c'], 2)
+  console.log(Pm)
   t.deepEqual(Pm, [
     ['a', 'a'],
     ['a', 'b'],
@@ -377,7 +377,6 @@ test('permutationsNkmultisets generator', t => {
   ])
   t.deepEqual(KOMB.permutationsNKMultiSets(['a', 'a', 'b', 'b', 'c'], 1), [['a'], ['b'], ['c']])
   t.deepEqual(KOMB.permutationsNKMultiSets(['a', 'b', 'c'], 1), [['a'], ['b'], ['c']])
-  // console.log(Pm)
 })
 
 test('cross product generator', t => {

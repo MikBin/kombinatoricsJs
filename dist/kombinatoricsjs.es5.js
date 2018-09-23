@@ -274,7 +274,7 @@ const pickMulti = (n, got, pos, from, limit, limitCount, callBack) => {
 };
 const generateFirstMultiSetIndex = (n, k, limits) => {
     let index = new Array(k);
-    let limitsCounter = (new Array(n)).fill(0);
+    let limitsCounter = new Array(n).fill(0);
     let lastVal = 0;
     for (let i = 0; i < k; i++) {
         index[i] = lastVal;
@@ -329,7 +329,7 @@ const multiSetCombinationsStep = (index, maxVal, limits, limitsCount) => {
                 index[k] = lastVal;
                 limitsCount[lastVal]++;
             }
-            else if (k = index.length - 1) {
+            else if ((k = index.length - 1)) {
                 return false;
             }
             k++;
@@ -339,7 +339,7 @@ const multiSetCombinationsStep = (index, maxVal, limits, limitsCount) => {
 };
 const multiSetUniformIndexCombinationsIterator = (n, k, r) => {
     let maxVal = n - 1;
-    let limits = (new Array(n)).fill(r);
+    let limits = new Array(n).fill(r);
     let { limitsCounter, index } = generateFirstMultiSetIndex(n, k, limits);
     return () => {
         return multiSetCombinationsStep(index, maxVal, limits, limitsCounter);
@@ -349,7 +349,7 @@ const multiSetUniformIndexCombinationsIterator = (n, k, r) => {
 const multiSetCombinationsIterator = (list, k, repetitions) => {
     let n = list.length;
     let maxVal = list.length - 1;
-    let limits = (new Array(list.length)).fill(repetitions);
+    let limits = new Array(list.length).fill(repetitions);
     let { limitsCounter, index } = generateFirstMultiSetIndex(list.length, k, limits);
     let _index = index.slice();
     let _collection = list.slice();
@@ -408,44 +408,43 @@ const multiSetCombinationsIterator = (list, k, repetitions) => {
 const multiCombinations = (_collection, k, repetition) => {
     let multiComb = [];
     let maxVal = _collection.length - 1;
-    let limits = (new Array(_collection.length)).fill(repetition);
+    let limits = new Array(_collection.length).fill(repetition);
     let { limitsCounter, index } = generateFirstMultiSetIndex(_collection.length, k, limits);
     //first element
     multiComb.push(index.map(v => _collection[v]));
     let next = [];
-    while (next = multiSetCombinationsStep(index, maxVal, limits, limitsCounter)) {
+    while ((next = multiSetCombinationsStep(index, maxVal, limits, limitsCounter))) {
         multiComb.push(next.map(v => _collection[v]));
     }
-    /*
-      pick(n, [], 0, _collection, repetition, 0, (c: any[]) => {
-        multiComb.push(c.slice())
-      })
-    */
     return multiComb;
 };
 /**
- *@method  @TODO to be implemented using iterative method like the one above
+ *@method
  *
  *@param
  *@return
  */
-const combinationsMultiSets = (_collection, n) => {
-    var l = _collection.length, limitCount = [0], limits = [0], list = [_collection[0]], j = 0;
-    for (var i = 1; i < l; ++i) {
+const combinationsMultiSets = (_collection, k) => {
+    let l = _collection.length, limits = [1], list = [_collection[0]], j = 0;
+    for (let i = 1; i < l; ++i) {
         if (_collection[i] === _collection[i - 1]) {
             limits[j]++;
         }
         else {
             j++;
             list[j] = _collection[i];
-            limitCount.push(0);
-            limits.push(0);
+            limits.push(1);
         }
     }
-    var multiComb = [];
-    pickMulti(n, [], 0, list, limits, limitCount, (c) => {
-        multiComb.push(c.slice());
-    });
+    let maxVal = list.length - 1;
+    let { limitsCounter, index } = generateFirstMultiSetIndex(list.length, k, limits);
+    let multiComb = [];
+    //first element
+    multiComb.push(index.map(v => list[v]));
+    let next = [];
+    while ((next = multiSetCombinationsStep(index, maxVal, limits, limitsCounter))) {
+        multiComb.push(next.map(v => list[v]));
+    }
     return multiComb;
 };
 /*@TODO use destructuring*/
@@ -594,6 +593,10 @@ const permutationsMultiSets = (list) => {
     }
     return permutationMultiSet;
 };
+/*@TODO implement generation index of permutations multisets
+start with combinations iterator/generator and for each index slice it use next permutation
+
+*/
 const permutationsNKMultiSets = (list, k) => {
     let permsNK = [];
     let _combsNK = combinationsMultiSets(list, k);
