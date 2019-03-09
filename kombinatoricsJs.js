@@ -89,6 +89,66 @@
             return coeff;
         };
 
+      kombinatoricsJs._cNK =   (n, k) => {
+  if (k > n)
+    return 0;
+  if (k == 0)
+    return 1;
+  if (k > n / 2)
+    return kombinatoricsJs._cNK(n, n - k);
+  return n * kombinatoricsJs._cNK(n - 1, k - 1) / k;
+};
+
+kombinatoricsJs.combinationsNK = (n,k)=>{
+  if (k > n)
+    return 0;
+  if (k == 0)
+    return 1;
+  let R = 1;
+  for(let d=1;d<=k;d++) {
+    R*=n--;
+    R/=d;
+  }
+  return R;
+}
+
+  console.time("_cNK");
+    kombinatoricsJs._cNK(500,250);
+    console.timeEnd("_cNK");
+    console.time("combinations");
+    kombinatoricsJs.combinationsNK(500,250);
+console.timeEnd("combinations");
+
+/*
+_cNK: 0.428ms
+combinations: 0.172ms
+
+
+    let r1=0,r2=0,r3=0;
+ let n=20,k=10;
+while(true) {
+
+   
+    console.time("cNK");
+    r1=kombinatoricsJs.cNK(n,k);
+    console.timeEnd("cNK");
+    console.time("_cNK");
+    r2=kombinatoricsJs._cNK(n,k);
+    console.timeEnd("_cNK");
+    console.time("combinations");
+    r3=kombinatoricsJs.combinationsNK(n,k);
+console.timeEnd("combinations");
+    console.log(r1,r2,r3,n,k);
+    if(r1!==r2||r1!==r3||r2!==r3) {
+        console.log(`breaks in n:${n}, k:${k}`);
+        console.log(r1,r2,r3);
+        break;
+    }
+     
+    n++;
+    k++;
+}
+*/
         /**
          *@method
          *

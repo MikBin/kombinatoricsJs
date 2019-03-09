@@ -107,5 +107,6 @@ export declare const permutationsIterator: (list: any[]) => {
 export declare const permutationsMultiSets: (list: any[]) => any[][];
 export declare const permutationsNKMultiSets: (list: any[], k: number) => any[][];
 export declare const crossProduct: (list: any[], k: number) => any[][];
+export declare const vectorsCrossProduct: (vecA: any[], vecB: any[], crossFunction: Function) => any[];
 export declare const version: string;
 export {};

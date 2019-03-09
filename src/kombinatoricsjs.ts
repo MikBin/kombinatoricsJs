@@ -1,8 +1,4 @@
-/*TYPEDEFS?
-type CallbackFunctionVariadicAnyReturn = (...args: any[]) => any;
-type CallbackFunctionSomeVariadic =
-  (arg1: string, arg2: number, ...args: any[]) => void;
-*/
+/*generic function list type with variable number of arguments*/
 type genericListFn = <S>(list: S[], ...args: any[]) => S[][]
 
 export const factorial = (n: number): number => {
@@ -19,14 +15,16 @@ export const factorial = (n: number): number => {
  *@param
  *@return
  */
+
 export const cNK = (n: number, k: number): number => {
-  let i: number,
-    coeff: number = 1
-  if (n < k) return 0
-  if (n === k) return 1
-  for (i = n - k + 1; i <= n; ++i) coeff *= i
-  for (i = 1; i <= k; ++i) coeff /= i
-  return coeff
+  if (k > n) return 0
+  if (k == 0) return 1
+  let R: number = 1
+  for (let d = 1; d <= k; d++) {
+    R *= n--
+    R /= d
+  }
+  return R
 }
 
 /**
@@ -590,7 +588,7 @@ export const heapPermute = (n: number, items: any[], callBack: Function) => {
   if (n === 1) {
     callBack(items, n)
   } else {
-    for (var i = 0; i < n; ++i) {
+    for (let i = 0; i < n; ++i) {
       heapPermute(n - 1, items, callBack)
       if (n % 2 === 1) {
         swap(items, 0, n - 1)
@@ -780,7 +778,7 @@ export const permutationsMultiSets = (list: any[]): any[][] => {
   return permutationMultiSet
 }
 
-/*@TODO implement generation index of permutations multisets 
+/*@TODO implement generation index of permutations multisets
 start with combinations iterator/generator and for each index slice it use next permutation
 
 */
@@ -810,6 +808,17 @@ export const crossProduct = (list: any[], k: number): any[][] => {
     crossProdList[i] = tmpList
   }
   return crossProdList
+}
+
+export const vectorsCrossProduct = (vecA: any[], vecB: any[], crossFunction: Function): any[] => {
+  let res: any[] = []
+  vecA.forEach(eA => {
+    for (let eB of vecB) {
+      res.push(crossFunction(eA, eB))
+    }
+  })
+
+  return res
 }
 
 export const version: string = '1.0.3'

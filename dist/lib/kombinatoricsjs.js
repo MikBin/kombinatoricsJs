@@ -14,16 +14,16 @@ exports.factorial = (n) => {
  *@return
  */
 exports.cNK = (n, k) => {
-    let i, coeff = 1;
-    if (n < k)
+    if (k > n)
         return 0;
-    if (n === k)
+    if (k == 0)
         return 1;
-    for (i = n - k + 1; i <= n; ++i)
-        coeff *= i;
-    for (i = 1; i <= k; ++i)
-        coeff /= i;
-    return coeff;
+    let R = 1;
+    for (let d = 1; d <= k; d++) {
+        R *= n--;
+        R /= d;
+    }
+    return R;
 };
 /**
  *@method
@@ -480,7 +480,7 @@ exports.heapPermute = (n, items, callBack) => {
         callBack(items, n);
     }
     else {
-        for (var i = 0; i < n; ++i) {
+        for (let i = 0; i < n; ++i) {
             exports.heapPermute(n - 1, items, callBack);
             if (n % 2 === 1) {
                 swap(items, 0, n - 1);
@@ -676,5 +676,15 @@ exports.crossProduct = (list, k) => {
     }
     return crossProdList;
 };
+exports.vectorsCrossProduct = (vecA, vecB, crossFunction) => {
+    let res = [];
+    vecA.forEach((eA) => {
+        for (let eB of vecB) {
+            res.push(crossFunction(eA, eB));
+        }
+    });
+    return res;
+};
+;
 exports.version = '1.0.3';
 //# sourceMappingURL=kombinatoricsjs.js.map
