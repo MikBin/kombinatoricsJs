@@ -1,6 +1,4 @@
-
 # Javascript library for combinatorial computations
-
 
 A collection of combinatorial algorithms
 
@@ -146,4 +144,37 @@ no dependencies, works with commonJs, amd, or browser global
     /*[["b","a","b"],["b","b","a"],["a","c","b"],["b","a","c"],["b","c","a"],["c","a","b"],
     ["c","b","a"],["c","a","c"],["c","c","a"],["b","c","b"],["c","b","b"],["c","b","c"],["c","c","b"]] */
 
+## Generic Routines
+
+The library now supports generic routines, allowing you to provide your own comparison logic for sorting and equality checks. This is useful when dealing with complex data structures or when you need to define a custom sorting order.
+
+### `isEqual`
+
+The `isEqual` function is used to determine if two elements are equal. The default implementation uses the strict equality operator (`===`).
+
+### `compare`
+
+The `compare` function is used for sorting elements. It should return:
+- A negative number if the first element is smaller than the second.
+- A positive number if the first element is greater than the second.
+- `0` if the elements are equal.
+
+### Example
+
+Here's how you can use a custom comparator with `permutationsMultiSets`:
+
+```javascript
+const data = [
+    { value: 'a' },
+    { value: 'b' },
+    { value: 'b' },
+    { value: 'c' },
+    { value: 'c' }
+];
+
+const isEqual = (a, b) => a.value === b.value;
+
+const permMulti = kombinatoricsJs.permutationsMultiSets(data, isEqual);
+console.log(JSON.stringify(permMulti));
+```
 ```

@@ -398,3 +398,21 @@ test('cross product generator', t => {
   Cp = KOMB.crossProduct(['a', 'b', 'c'], 3)
   t.is(Cp.length, 27)
 })
+
+test('generic comparators', t => {
+  const data = [
+    { value: 'a' },
+    { value: 'b' },
+    { value: 'b' },
+    { value: 'c' },
+    { value: 'c' }
+  ];
+
+  const isEqual = (a: { value: string }, b: { value: string }) => a.value === b.value;
+
+  const permMulti = KOMB.permutationsMultiSets(data, isEqual);
+  t.is(permMulti.length, 30);
+
+  const combMulti = KOMB.combinationsMultiSets(data, 2, isEqual);
+  t.is(combMulti.length, 5);
+});
