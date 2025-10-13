@@ -1,6 +1,44 @@
 /*generic function list type with variable number of arguments*/
 type genericListFn = <S>(list: S[], ...args: any[]) => S[][]
 
+/**
+ * A function that compares two elements and returns true if they are equal.
+ * @template T The type of the elements to compare.
+ * @param a The first element.
+ * @param b The second element.
+ * @returns `true` if the elements are equal, `false` otherwise.
+ */
+type IsEqual<T> = (a: T, b: T) => boolean;
+
+/**
+ * A function that compares two elements and returns a number indicating their order.
+ * @template T The type of the elements to compare.
+ * @param a The first element.
+ * @param b The second element.
+ * @returns A negative number if `a` is less than `b`, a positive number if `a` is greater than `b`, and `0` if they are equal.
+ */
+type Compare<T> = (a: T, b: T) => number;
+
+/**
+ * The default equality comparator, using strict equality (`===`).
+ * @param a The first element.
+ * @param b The second element.
+ * @returns `true` if the elements are strictly equal, `false` otherwise.
+ */
+const defaultIsEqual = (a: any, b: any): boolean => a === b;
+
+/**
+ * The default comparison function for ordering.
+ * @param a The first element.
+ * @param b The second element.
+ * @returns `-1` if `a` is less than `b`, `1` if `a` is greater than `b`, and `0` if they are equal.
+ */
+const defaultCompare = (a: any, b: any): number => {
+    if (a < b) return -1;
+    if (a > b) return 1;
+    return 0;
+};
+
 export const factorial = (n: number): number => {
   let f: number = 1
   for (let i: number = 1; i < n + 1; ++i) {
@@ -10,12 +48,11 @@ export const factorial = (n: number): number => {
 }
 
 /**
- *@method
- *
- *@param
- *@return
+ * Calculates the number of combinations (nCk) from a set of n elements taken k at a time.
+ * @param n The total number of elements.
+ * @param k The number of elements to choose.
+ * @returns The number of combinations.
  */
-
 export const cNK = (n: number, k: number): number => {
   if (k > n) return 0
   if (k == 0) return 1
@@ -28,10 +65,10 @@ export const cNK = (n: number, k: number): number => {
 }
 
 /**
- *@method
- *
- *@param
- *@return
+ * Calculates the number of permutations (nPk) from a set of n elements taken k at a time.
+ * @param n The total number of elements.
+ * @param k The number of elements to choose.
+ * @returns The number of permutations.
  */
 export const pNK = (n: number, k: number): number => {
   let f: number = 1
@@ -81,7 +118,8 @@ export const memoize_pNK = memoize(pNK)
 export const memoize_cNK = memoize(cNK)
 
 /**
- *BoxMuller method
+ * Generates a random number from a standard normal distribution using the Box-Muller transform.
+ * @returns An array containing two random numbers from a standard normal distribution.
  */
 const rnd_bmt = (): number[] => {
   let x: number = 0,
@@ -107,19 +145,17 @@ const rnd_bmt = (): number[] => {
 }
 
 /**
- *Central Limit method
+ * Generates a random number from a standard normal distribution using the Central Limit theorem.
+ * @returns A random number from a standard normal distribution.
  */
 const rnd_snd = () => {
   return Math.random() * 2 - 1 + (Math.random() * 2 - 1) + (Math.random() * 2 - 1)
 }
 
 /**
- *@method
- *
- *@param
- *@return
+ * Shuffles an array in place.
+ * @param ar The array to shuffle.
  */
-
 export const shuffle = (ar: any[]): void => {
   let i: number,
     r: number,
@@ -132,10 +168,7 @@ export const shuffle = (ar: any[]): void => {
 }
 
 /**
- *@method
- *
- *@param
- *@return
+ * An object containing methods for generating random numbers from a normal distribution.
  */
 export const normalRandom = {
   BoxMuller: rnd_bmt,
@@ -143,12 +176,10 @@ export const normalRandom = {
 }
 
 /**
- *@method
- *
- *@param
- *@return
+ * Creates an array of numbers from 0 to l-1.
+ * @param l The length of the array.
+ * @returns An array of numbers.
  */
-
 export const indexArray = (l: number) => {
   let arr: number[] = []
 
@@ -162,13 +193,11 @@ export const indexArray = (l: number) => {
 }
 
 /**
- *@method
- *
- *@param
- *@return
+ * Increments a vector of indices to the next combination.
+ * @param idxVector The vector of indices to increment.
+ * @param maxVal The maximum value for an index.
+ * @returns `1` if the vector was incremented successfully, `0` otherwise.
  */
-/*iterator for generating combinations call it nextCombination*/
-
 export const binomIncrement = (idxVector: number[], maxVal: number) => {
   let l: number, i: number, j: number
   j = 0
@@ -259,7 +288,8 @@ export const pick = (
   from: any[],
   limit: number,
   cntLimit: number,
-  callBack: Function
+  callBack: Function,
+  isEqual: IsEqual<any> = defaultIsEqual
 ): number => {
   let cnt: number = 0,
     limitCount: number = cntLimit
@@ -272,15 +302,15 @@ export const pick = (
     got.push(from[i])
 
     if (limitCount === limit) {
-      cnt += pick(n, got, i + 1, from, limit, 0, callBack)
+      cnt += pick(n, got, i + 1, from, limit, 0, callBack, isEqual)
       limitCount = 0
     } else {
       let next: number =
-        limitCount === 0 || got[got.length - 1] === got[got.length - 2]
+        limitCount === 0 || isEqual(got[got.length - 1], got[got.length - 2])
           ? limitCount + 1
           : limitCount
 
-      cnt += pick(n, got, i, from, limit, next, callBack)
+      cnt += pick(n, got, i, from, limit, next, callBack, isEqual)
     }
 
     got.pop()
@@ -290,13 +320,12 @@ export const pick = (
 }
 
 /**
- *@method
- *
- *@param
- *@return
+ * Generates all combinations of k elements from a collection.
+ * @param _collection The collection of elements.
+ * @param k The number of elements in each combination.
+ * @returns An array of all combinations.
  */
-
-export const combinations: genericListFn = (_collection: any[], k: number): any[][] => {
+export const combinations: genericListFn = (_collection: any[], k: number, isEqual: IsEqual<any> = defaultIsEqual): any[][] => {
   if (_collection.length < k || k < 1) {
     return [_collection]
   }
@@ -305,7 +334,7 @@ export const combinations: genericListFn = (_collection: any[], k: number): any[
 
   pick(k, [], 0, _collection, 0, 0, (c: any[]) => {
     comb.push(c.slice())
-  })
+  }, isEqual)
 
   return comb
 }
@@ -317,7 +346,8 @@ export const pickMulti = (
   from: any[],
   limit: number[],
   limitCount: number[],
-  callBack: Function
+  callBack: Function,
+  isEqual: IsEqual<any> = defaultIsEqual
 ) => {
   /*let limitCount = limitCnt.slice();*/
 
@@ -330,12 +360,12 @@ export const pickMulti = (
 
     if (limitCount[i] === limit[i]) {
       limitCount[i] = 0
-      pickMulti(n, got, i + 1, from, limit, limitCount, callBack)
+      pickMulti(n, got, i + 1, from, limit, limitCount, callBack, isEqual)
     } else {
-      if (pos === 0 || limitCount[i] === 0 || got[got.length - 1] === got[got.length - 2]) {
+      if (pos === 0 || limitCount[i] === 0 || isEqual(got[got.length - 1], got[got.length - 2])) {
         limitCount[i]++
       }
-      pickMulti(n, got, i, from, limit, limitCount, callBack)
+      pickMulti(n, got, i, from, limit, limitCount, callBack, isEqual)
     }
 
     got.pop()
@@ -491,10 +521,11 @@ export const multiSetCombinationsIterator = (list: any[], k: number, repetitions
 }
 
 /**
- *@method
- *
- *@param
- *@return
+ * Generates all combinations with repetitions of k elements from a collection.
+ * @param _collection The collection of elements.
+ * @param k The number of elements in each combination.
+ * @param repetition The number of times each element can be repeated.
+ * @returns An array of all combinations with repetitions.
  */
 export const multiCombinations = (_collection: any[], k: number, repetition: number): any[][] => {
   let multiComb: any[][] = []
@@ -514,19 +545,20 @@ export const multiCombinations = (_collection: any[], k: number, repetition: num
 }
 
 /**
- *@method
- *
- *@param
- *@return
+ * Generates all combinations of k elements from a multiset.
+ * @param _collection The multiset of elements.
+ * @param k The number of elements in each combination.
+ * @param isEqual A function to compare two elements for equality.
+ * @returns An array of all combinations from the multiset.
  */
-export const combinationsMultiSets = (_collection: any[], k: number): any[][] => {
+export const combinationsMultiSets = (_collection: any[], k: number, isEqual: IsEqual<any> = defaultIsEqual): any[][] => {
   let l: number = _collection.length,
     limits: number[] = [1],
     list: any[] = [_collection[0]],
     j: number = 0
 
   for (let i: number = 1; i < l; ++i) {
-    if (_collection[i] === _collection[i - 1]) {
+    if (isEqual(_collection[i], _collection[i - 1])) {
       limits[j]++
     } else {
       j++
@@ -550,7 +582,7 @@ export const combinationsMultiSets = (_collection: any[], k: number): any[][] =>
   return multiComb
 }
 
-const old_pick_version_combinationsMultiSets = (_collection: any[], n: number): any[][] => {
+const old_pick_version_combinationsMultiSets = (_collection: any[], n: number, isEqual: IsEqual<any> = defaultIsEqual): any[][] => {
   var l = _collection.length,
     limitCount = [0],
     limits = [0],
@@ -558,7 +590,7 @@ const old_pick_version_combinationsMultiSets = (_collection: any[], n: number): 
     j = 0
 
   for (var i = 1; i < l; ++i) {
-    if (_collection[i] === _collection[i - 1]) {
+    if (isEqual(_collection[i], _collection[i - 1])) {
       limits[j]++
     } else {
       j++
@@ -571,7 +603,7 @@ const old_pick_version_combinationsMultiSets = (_collection: any[], n: number): 
 
   pickMulti(n, [], 0, list, limits, limitCount, (c: any[]) => {
     multiComb.push(c.slice())
-  })
+  }, isEqual)
 
   return multiComb
 }
@@ -599,7 +631,7 @@ export const heapPermute = (n: number, items: any[], callBack: Function) => {
   }
 }
 
-export const permutations = (list: any[]): any[][] => {
+export const permutations = (list: any[], compare: Compare<any> = defaultCompare): any[][] => {
   var p = indexArray(list.length)
   var i = 1,
     j
@@ -622,12 +654,17 @@ export const permutations = (list: any[]): any[][] => {
   return perms
 }
 
-/*are called variations in some libraries*/
-export const permutationsNK = (list: any[], k: number): any[][] => {
+/**
+ * Generates all permutations of k elements from a list.
+ * @param list The list of elements.
+ * @param k The number of elements in each permutation.
+ * @returns An array of all permutations.
+ */
+export const permutationsNK = (list: any[], k: number, isEqual: IsEqual<any> = defaultIsEqual, compare: Compare<any> = defaultCompare): any[][] => {
   let permsNK: any[][] = []
-  let _combsNK = combinations(list, k)
+  let _combsNK = combinations(list, k, isEqual)
   for (let i = 0; i < _combsNK.length; ++i) {
-    permsNK.push(permutations(_combsNK[i]))
+    permsNK.push(permutations(_combsNK[i], compare))
   }
   return matrixToArray(permsNK)
 }
@@ -651,16 +688,16 @@ const nextPermutation = (list: any[], index: number[], callBack: Function) => {
 }
 
 /*not exposed*/
-const nextPermutationLexi = (list: any[]) => {
+const nextPermutationLexi = (list: any[], compare: Compare<any> = defaultCompare) => {
   var n = list.length
   var i = n - 1
-  while (i > 0 && list[i - 1] >= list[i]) {
+  while (i > 0 && compare(list[i - 1], list[i]) >= 0) {
     i--
   }
   if (i <= 0) return 0
   var j = n - 1
 
-  while (list[j] <= list[i - 1]) {
+  while (compare(list[j], list[i - 1]) <= 0) {
     j--
   }
   swap(list, i - 1, j)
@@ -675,14 +712,14 @@ const nextPermutationLexi = (list: any[]) => {
   return 1
 }
 
-const makeIndex = (list: any[]) => {
+const makeIndex = (list: any[], isEqual: IsEqual<any> = defaultIsEqual) => {
   let n: number = list.length
   let index: number[] = indexArray(n)
   let j = 0,
     k = 0
 
   for (var i = 1; i < n; ++i) {
-    if (list[i] === list[i - 1]) {
+    if (isEqual(list[i], list[i - 1])) {
       index[i] = index[i - 1] = j
     } else {
       j++
@@ -692,7 +729,7 @@ const makeIndex = (list: any[]) => {
   return index
 }
 
-export const permutationsIterator = (list: any[]) => {
+export const permutationsIterator = (list: any[], compare: Compare<any> = defaultCompare) => {
   var n = list.length
 
   var _index = indexArray(n)
@@ -710,7 +747,7 @@ export const permutationsIterator = (list: any[]) => {
 
   var iterator = {
     next: function() {
-      if (nextPermutationLexi(_index)) {
+      if (nextPermutationLexi(_index, compare)) {
         count++
         setPermutation()
         return 1
@@ -722,7 +759,7 @@ export const permutationsIterator = (list: any[]) => {
       if (cnt > 0) {
         var c = cnt - count
         var step
-        while (c > 0 && (step = nextPermutationLexi(_index))) {
+        while (c > 0 && (step = nextPermutationLexi(_index, compare))) {
           c--
           count++
         }
@@ -748,7 +785,7 @@ export const permutationsIterator = (list: any[]) => {
   return iterator
 }
 
-export const permutationsMultiSets = (list: any[]): any[][] => {
+export const permutationsMultiSets = (list: any[], isEqual: IsEqual<any> = defaultIsEqual): any[][] => {
   let n = list.length,
     index = indexArray(n)
   let data = [list[0]],
@@ -758,7 +795,7 @@ export const permutationsMultiSets = (list: any[]): any[][] => {
     permutationMultiSet: any[][] = [list.slice()]
   /*initializaition*/
   for (let i: number = 1; i < n; ++i) {
-    if (list[i] === list[i - 1]) {
+    if (isEqual(list[i], list[i - 1])) {
       index[i] = index[i - 1] = j
     } else {
       j++
@@ -778,19 +815,28 @@ export const permutationsMultiSets = (list: any[]): any[][] => {
   return permutationMultiSet
 }
 
-/*@TODO implement generation index of permutations multisets
-start with combinations iterator/generator and for each index slice it use next permutation
-
-*/
-export const permutationsNKMultiSets = (list: any[], k: number): any[][] => {
+/**
+ * Generates all permutations of k elements from a multiset.
+ * @param list The multiset of elements.
+ * @param k The number of elements in each permutation.
+ * @param isEqual A function to compare two elements for equality.
+ * @returns An array of all permutations from the multiset.
+ */
+export const permutationsNKMultiSets = (list: any[], k: number, isEqual: IsEqual<any> = defaultIsEqual, compare: Compare<any> = defaultCompare): any[][] => {
   let permsNK: any[][] = []
-  let _combsNK = combinationsMultiSets(list, k)
+  let _combsNK = combinationsMultiSets(list, k, isEqual)
   for (let i: number = 0; i < _combsNK.length; ++i) {
-    permsNK.push(permutationsMultiSets(_combsNK[i]))
+    permsNK.push(permutationsMultiSets(_combsNK[i], isEqual))
   }
   return matrixToArray(permsNK)
 }
 
+/**
+ * Generates the Cartesian product of a list with itself k times.
+ * @param list The list of elements.
+ * @param k The number of times to repeat the list.
+ * @returns The Cartesian product.
+ */
 export const crossProduct = (list: any[], k: number): any[][] => {
   if (k < 1) return list
   let crossProdList: any[][] = new Array(Math.pow(list.length, k))
@@ -810,6 +856,13 @@ export const crossProduct = (list: any[], k: number): any[][] => {
   return crossProdList
 }
 
+/**
+ * Generates the cross product of two vectors using a custom function.
+ * @param vecA The first vector.
+ * @param vecB The second vector.
+ * @param crossFunction A function that takes an element from each vector and returns a new element.
+ * @returns The cross product of the two vectors.
+ */
 export const vectorsCrossProduct = (vecA: any[], vecB: any[], crossFunction: Function): any[] => {
   let res: any[] = []
   vecA.forEach(eA => {
@@ -821,4 +874,4 @@ export const vectorsCrossProduct = (vecA: any[], vecB: any[], crossFunction: Fun
   return res
 }
 
-export const version: string = '1.0.3'
+export const version: string = '1.1.0'
