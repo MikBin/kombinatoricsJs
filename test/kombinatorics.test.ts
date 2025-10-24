@@ -1,112 +1,110 @@
 import * as KOMB from '../src/kombinatoricsjs'
+import { test, expect } from 'vitest'
 
-import test from 'ava'
+test('factorial numeric value', () => {
+  expect(KOMB.factorial(0)).toBe(1)
+  expect(KOMB.factorial(1)).toBe(1)
+  expect(KOMB.factorial(5)).toBe(120)
 
-test('factorial numeric value', t => {
-  t.is(KOMB.factorial(0), 1)
-  t.is(KOMB.factorial(1), 1)
-  t.is(KOMB.factorial(5), 120)
-
-  t.is(KOMB.memoize_factorial(0), 1)
-  t.is(KOMB.memoize_factorial(1), 1)
-  t.is(KOMB.memoize_factorial(5), 120)
+  expect(KOMB.memoize_factorial(0)).toBe(1)
+  expect(KOMB.memoize_factorial(1)).toBe(1)
+  expect(KOMB.memoize_factorial(5)).toBe(120)
 })
 
-test('permutations numeric value', t => {
-  t.is(KOMB.pNK(0, 0), 1)
-  t.is(KOMB.pNK(1, 0), 1)
-  t.is(KOMB.pNK(1, 1), 1)
-  t.is(KOMB.pNK(3, 2), 6)
+test('permutations numeric value', () => {
+  expect(KOMB.pNK(0, 0)).toBe(1)
+  expect(KOMB.pNK(1, 0)).toBe(1)
+  expect(KOMB.pNK(1, 1)).toBe(1)
+  expect(KOMB.pNK(3, 2)).toBe(6)
 
-  t.is(KOMB.memoize_pNK(0, 0), 1)
-  t.is(KOMB.memoize_pNK(1, 0), 1)
-  t.is(KOMB.memoize_pNK(1, 1), 1)
-  t.is(KOMB.memoize_pNK(3, 2), 6)
+  expect(KOMB.memoize_pNK(0, 0)).toBe(1)
+  expect(KOMB.memoize_pNK(1, 0)).toBe(1)
+  expect(KOMB.memoize_pNK(1, 1)).toBe(1)
+  expect(KOMB.memoize_pNK(3, 2)).toBe(6)
 })
 
-test('combinations numeric value', t => {
-  t.is(KOMB.cNK(0, 0), 1)
-  t.is(KOMB.cNK(1, 0), 1)
-  t.is(KOMB.cNK(1, 1), 1)
-  t.is(KOMB.cNK(3, 2), 3)
-  t.is(KOMB.cNK(5, 2), 10)
-  t.is(KOMB.cNK(10, 4), 210)
+test('combinations numeric value', () => {
+  expect(KOMB.cNK(0, 0)).toBe(1)
+  expect(KOMB.cNK(1, 0)).toBe(1)
+  expect(KOMB.cNK(1, 1)).toBe(1)
+  expect(KOMB.cNK(3, 2)).toBe(3)
+  expect(KOMB.cNK(5, 2)).toBe(10)
+  expect(KOMB.cNK(10, 4)).toBe(210)
 
-  t.is(KOMB.memoize_cNK(0, 0), 1)
-  t.is(KOMB.memoize_cNK(1, 0), 1)
-  t.is(KOMB.memoize_cNK(1, 1), 1)
-  t.is(KOMB.memoize_cNK(3, 2), 3)
-  t.is(KOMB.memoize_cNK(5, 2), 10)
-  t.is(KOMB.memoize_cNK(10, 4), 210)
+  expect(KOMB.memoize_cNK(0, 0)).toBe(1)
+  expect(KOMB.memoize_cNK(1, 0)).toBe(1)
+  expect(KOMB.memoize_cNK(1, 1)).toBe(1)
+  expect(KOMB.memoize_cNK(3, 2)).toBe(3)
+  expect(KOMB.memoize_cNK(5, 2)).toBe(10)
+  expect(KOMB.memoize_cNK(10, 4)).toBe(210)
 })
 
-test('matrix to array', t => {
-  t.deepEqual(KOMB.matrixToArray([[1, 2], [3, 4], [5, 6]]), [1, 2, 3, 4, 5, 6])
-  t.deepEqual(KOMB.matrixToArray([[1, 2]]), [1, 2])
+test('matrix to array', () => {
+  expect(KOMB.matrixToArray([[1, 2], [3, 4], [5, 6]])).toEqual([1, 2, 3, 4, 5, 6])
+  expect(KOMB.matrixToArray([[1, 2]])).toEqual([1, 2])
 })
 
-test('combinations iterator', t => {
+test('combinations iterator', () => {
   let index = KOMB.indexArray(5)
-  t.deepEqual(index, [0, 1, 2, 3, 4])
+  expect(index).toEqual([0, 1, 2, 3, 4])
 
   let iterator = KOMB.combinationsIterator(['a', 'b', 'c', 'd'], 2)
-  t.is(iterator.getCount(), 0)
-  t.deepEqual(iterator.getIndex(), [0, 1])
-  t.deepEqual(iterator.getComb(), ['a', 'b'])
+  expect(iterator.getCount()).toBe(0)
+  expect(iterator.getIndex()).toEqual([0, 1])
+  expect(iterator.getComb()).toEqual(['a', 'b'])
   iterator.next()
-  t.is(iterator.getCount(), 1)
-  t.deepEqual(iterator.getIndex(), [0, 2])
-  t.deepEqual(iterator.getComb(5), ['c', 'd'])
+  expect(iterator.getCount()).toBe(1)
+  expect(iterator.getIndex()).toEqual([0, 2])
+  expect(iterator.getComb(5)).toEqual(['c', 'd'])
 
   iterator.reset()
-  t.is(iterator.getCount(), 0)
-  t.deepEqual(iterator.getIndex(), [0, 1])
-  t.deepEqual(iterator.getComb(), ['a', 'b'])
+  expect(iterator.getCount()).toBe(0)
+  expect(iterator.getIndex()).toEqual([0, 1])
+  expect(iterator.getComb()).toEqual(['a', 'b'])
 
-  t.deepEqual(iterator.getComb(5), ['c', 'd'])
+  expect(iterator.getComb(5)).toEqual(['c', 'd'])
 })
 
-test('permutations iterator', t => {
+test('permutations iterator', () => {
   let iterator = KOMB.permutationsIterator(['a', 'b', 'c'])
-  t.is(iterator.getCount(), 0)
-  t.deepEqual(iterator.getIndex(), [0, 1, 2])
-  t.deepEqual(iterator.getPerm(), ['a', 'b', 'c'])
+  expect(iterator.getCount()).toBe(0)
+  expect(iterator.getIndex()).toEqual([0, 1, 2])
+  expect(iterator.getPerm()).toEqual(['a', 'b', 'c'])
   iterator.next()
-  t.is(iterator.getCount(), 1)
-  t.deepEqual(iterator.getIndex(), [0, 2, 1])
-  t.deepEqual(iterator.getPerm(5), ['c', 'b', 'a'])
-  t.deepEqual(iterator.getIndex(), [2, 1, 0])
+  expect(iterator.getCount()).toBe(1)
+  expect(iterator.getIndex()).toEqual([0, 2, 1])
+  expect(iterator.getPerm(5)).toEqual(['c', 'b', 'a'])
+  expect(iterator.getIndex()).toEqual([2, 1, 0])
 
   iterator.reset()
-  t.is(iterator.getCount(), 0)
-  t.deepEqual(iterator.getIndex(), [0, 1, 2])
-  t.deepEqual(iterator.getPerm(), ['a', 'b', 'c'])
+  expect(iterator.getCount()).toBe(0)
+  expect(iterator.getIndex()).toEqual([0, 1, 2])
+  expect(iterator.getPerm()).toEqual(['a', 'b', 'c'])
 
-  t.deepEqual(iterator.getPerm(5), ['c', 'b', 'a'])
+  expect(iterator.getPerm(5)).toEqual(['c', 'b', 'a'])
 })
 
-test('generateFirstMultiSetIndex', t => {
+test('generateFirstMultiSetIndex', () => {
   let res = KOMB.generateFirstMultiSetIndex(5, 4, [3, 3, 3, 3, 3])
-  t.deepEqual(
+  expect(res).toEqual(
     {
       limitsCounter: [3, 1, 0, 0, 0],
       index: [0, 0, 0, 1]
-    },
-    res
+    }
   )
 })
 
-test('combination multi set iterator next function', t => {
+test('combination multi set iterator next function', () => {
   let startIdx = [0, 0, 0, 1]
   let limitsCounter = [3, 1, 0, 0, 0]
   let next = KOMB.multiSetCombinationsStep(startIdx, 4, [3, 3, 3, 3, 3], limitsCounter)
-  t.deepEqual(next, [0, 0, 0, 2])
+  expect(next).toEqual([0, 0, 0, 2])
   let all = [[0, 0, 0, 1], [0, 0, 0, 2]]
   while (next) {
     next = KOMB.multiSetCombinationsStep(startIdx, 4, [3, 3, 3, 3, 3], limitsCounter)
     if (next) all.push(next.slice())
   }
-  t.deepEqual(all, [
+  expect(all).toEqual([
     [0, 0, 0, 1],
     [0, 0, 0, 2],
     [0, 0, 0, 3],
@@ -176,12 +174,12 @@ test('combination multi set iterator next function', t => {
   /*@TODO test non uniforms limits counts*/
 })
 
-test('combinations generator ', t => {
+test('combinations generator ', () => {
   let C = KOMB.combinations(['a', 'b', 'c'], 1)
 
-  t.deepEqual(C, [['a'], ['b'], ['c']])
-  t.deepEqual(KOMB.combinations(['a', 'b', 'c'], 3), [['a', 'b', 'c']])
-  t.deepEqual(KOMB.combinations(['a', 'b', 'c', 'd'], 3), [
+  expect(C).toEqual([['a'], ['b'], ['c']])
+  expect(KOMB.combinations(['a', 'b', 'c'], 3)).toEqual([['a', 'b', 'c']])
+  expect(KOMB.combinations(['a', 'b', 'c', 'd'], 3)).toEqual([
     ['a', 'b', 'c'],
     ['a', 'b', 'd'],
     ['a', 'c', 'd'],
@@ -189,11 +187,11 @@ test('combinations generator ', t => {
   ])
 })
 
-test('permutations generator ', t => {
-  t.deepEqual(KOMB.permutations(['a']), [['a']])
-  t.deepEqual(KOMB.permutations(['a', 'b']), [['a', 'b'], ['b', 'a']])
+test('permutations generator ', () => {
+  expect(KOMB.permutations(['a'])).toEqual([['a']])
+  expect(KOMB.permutations(['a', 'b'])).toEqual([['a', 'b'], ['b', 'a']])
   let P = KOMB.permutations(['a', 'b', 'c'])
-  t.deepEqual(P, [
+  expect(P).toEqual([
     ['a', 'b', 'c'],
     ['b', 'a', 'c'],
     ['c', 'a', 'b'],
@@ -203,12 +201,12 @@ test('permutations generator ', t => {
   ])
 })
 
-test('permutationsNK generator ', t => {
-  t.deepEqual(KOMB.permutationsNK(['a'], 1), [['a']])
-  t.deepEqual(KOMB.permutationsNK(['a', 'b'], 2), [['a', 'b'], ['b', 'a']])
-  t.deepEqual(KOMB.permutationsNK(['a', 'b'], 1), [['a'], ['b']])
+test('permutationsNK generator ', () => {
+  expect(KOMB.permutationsNK(['a'], 1)).toEqual([['a']])
+  expect(KOMB.permutationsNK(['a', 'b'], 2)).toEqual([['a', 'b'], ['b', 'a']])
+  expect(KOMB.permutationsNK(['a', 'b'], 1)).toEqual([['a'], ['b']])
   let P = KOMB.permutationsNK(['a', 'b', 'c'], 3)
-  t.deepEqual(P, [
+  expect(P).toEqual([
     ['a', 'b', 'c'],
     ['b', 'a', 'c'],
     ['c', 'a', 'b'],
@@ -218,14 +216,14 @@ test('permutationsNK generator ', t => {
   ])
 
   P = KOMB.permutationsNK(['a', 'b', 'c'], 2)
-  t.deepEqual(P, [['a', 'b'], ['b', 'a'], ['a', 'c'], ['c', 'a'], ['b', 'c'], ['c', 'b']])
+  expect(P).toEqual([['a', 'b'], ['b', 'a'], ['a', 'c'], ['c', 'a'], ['b', 'c'], ['c', 'b']])
 })
 
-test('multiCombinations generator ', t => {
+test('multiCombinations generator ', () => {
   let K = KOMB.multiCombinations(['a', 'b', 'c'], 3, 1)
 
-  t.deepEqual(K, [['a', 'b', 'c']])
-  t.deepEqual(KOMB.multiCombinations(['a', 'b', 'c', 'd'], 3, 1), [
+  expect(K).toEqual([['a', 'b', 'c']])
+  expect(KOMB.multiCombinations(['a', 'b', 'c', 'd'], 3, 1)).toEqual([
     ['a', 'b', 'c'],
     ['a', 'b', 'd'],
     ['a', 'c', 'd'],
@@ -233,8 +231,8 @@ test('multiCombinations generator ', t => {
   ])
 
   K = KOMB.multiCombinations(['a', 'b', 'c', 'd'], 4, 3)
-  t.is(K.length, 31)
-  t.deepEqual(K, [
+  expect(K.length).toBe(31)
+  expect(K).toEqual([
     ['a', 'a', 'a', 'b'],
     ['a', 'a', 'a', 'c'],
     ['a', 'a', 'a', 'd'],
@@ -269,19 +267,19 @@ test('multiCombinations generator ', t => {
   ])
 
   K = KOMB.multiCombinations([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], 7, 4)
-  t.is(K.length, 49205)
+  expect(K.length).toBe(49205)
 })
 
-test('combinationsMultiSets generator ', t => {
+test('combinationsMultiSets generator ', () => {
   //console.log(KOMB.combinationsMultiSets(["a", "a", "a", "b", "b", "b", "c", "c", "c", "d", "d", "d"], 4));
   let K = KOMB.combinationsMultiSets(['a', 'b', 'c'], 3)
-  t.deepEqual(K, [['a', 'b', 'c']])
+  expect(K).toEqual([['a', 'b', 'c']])
   K = KOMB.combinationsMultiSets(['a', 'a', 'c'], 2)
-  t.deepEqual(K, [['a', 'a'], ['a', 'c']])
+  expect(K).toEqual([['a', 'a'], ['a', 'c']])
   console.log(K)
   K = KOMB.combinationsMultiSets(['a', 'a', 'a', 'b', 'b', 'b', 'c', 'c', 'c', 'd', 'd', 'd'], 4)
-  t.is(K.length, 31)
-  t.deepEqual(K, [
+  expect(K.length).toBe(31)
+  expect(K).toEqual([
     ['a', 'a', 'a', 'b'],
     ['a', 'a', 'a', 'c'],
     ['a', 'a', 'a', 'd'],
@@ -316,10 +314,10 @@ test('combinationsMultiSets generator ', t => {
   ])
 })
 
-test('permutations multiset generator', t => {
+test('permutations multiset generator', () => {
   /*mutiset permutation returns in lexicograpic order*/
   let Pm = KOMB.permutationsMultiSets(['a', 'a', 'b', 'b', 'c'])
-  t.deepEqual(Pm, [
+  expect(Pm).toEqual([
     ['a', 'a', 'b', 'b', 'c'],
     ['a', 'a', 'b', 'c', 'b'],
     ['a', 'a', 'c', 'b', 'b'],
@@ -352,7 +350,7 @@ test('permutations multiset generator', t => {
     ['c', 'b', 'b', 'a', 'a']
   ])
 
-  t.deepEqual(KOMB.permutationsMultiSets(['a', 'b', 'c']), [
+  expect(KOMB.permutationsMultiSets(['a', 'b', 'c'])).toEqual([
     ['a', 'b', 'c'],
     ['a', 'c', 'b'],
     ['b', 'a', 'c'],
@@ -362,10 +360,10 @@ test('permutations multiset generator', t => {
   ])
 })
 
-test('permutationsNkmultisets generator', t => {
+test('permutationsNkmultisets generator', () => {
   let Pm = KOMB.permutationsNKMultiSets(['a', 'a', 'b', 'b', 'c'], 2)
   console.log(Pm)
-  t.deepEqual(Pm, [
+  expect(Pm).toEqual([
     ['a', 'a'],
     ['a', 'b'],
     ['b', 'a'],
@@ -375,13 +373,13 @@ test('permutationsNkmultisets generator', t => {
     ['b', 'c'],
     ['c', 'b']
   ])
-  t.deepEqual(KOMB.permutationsNKMultiSets(['a', 'a', 'b', 'b', 'c'], 1), [['a'], ['b'], ['c']])
-  t.deepEqual(KOMB.permutationsNKMultiSets(['a', 'b', 'c'], 1), [['a'], ['b'], ['c']])
+  expect(KOMB.permutationsNKMultiSets(['a', 'a', 'b', 'b', 'c'], 1)).toEqual([['a'], ['b'], ['c']])
+  expect(KOMB.permutationsNKMultiSets(['a', 'b', 'c'], 1)).toEqual([['a'], ['b'], ['c']])
 })
 
-test('cross product generator', t => {
+test('cross product generator', () => {
   let Cp = KOMB.crossProduct(['a', 'b', 'c'], 2)
-  t.deepEqual(Cp, [
+  expect(Cp).toEqual([
     ['a', 'a'],
     ['a', 'b'],
     ['a', 'c'],
@@ -394,12 +392,12 @@ test('cross product generator', t => {
   ])
 
   Cp = KOMB.crossProduct(['a', 'b', 'c'], 1)
-  t.deepEqual(Cp, [['a'], ['b'], ['c']])
+  expect(Cp).toEqual([['a'], ['b'], ['c']])
   Cp = KOMB.crossProduct(['a', 'b', 'c'], 3)
-  t.is(Cp.length, 27)
+  expect(Cp.length).toBe(27)
 })
 
-test('generic comparators', t => {
+test('generic comparators', () => {
   const data = [
     { value: 'a' },
     { value: 'b' },
@@ -411,8 +409,8 @@ test('generic comparators', t => {
   const isEqual = (a: { value: string }, b: { value: string }) => a.value === b.value;
 
   const permMulti = KOMB.permutationsMultiSets(data, isEqual);
-  t.is(permMulti.length, 30);
+  expect(permMulti.length).toBe(30);
 
   const combMulti = KOMB.combinationsMultiSets(data, 2, isEqual);
-  t.is(combMulti.length, 5);
+  expect(combMulti.length).toBe(5);
 });
